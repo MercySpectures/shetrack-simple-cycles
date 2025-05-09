@@ -1,5 +1,6 @@
 
 import { PeriodCalendar } from "@/components/PeriodCalendar";
+import { CycleChart } from "@/components/CycleChart";
 
 const CalendarPage = () => {
   return (
@@ -9,7 +10,10 @@ const CalendarPage = () => {
         <p className="text-muted-foreground">Track and predict your cycle</p>
       </div>
       
-      <PeriodCalendar />
+      <div className="space-y-8">
+        <PeriodCalendar />
+        <CycleChart />
+      </div>
     </div>
   );
 };

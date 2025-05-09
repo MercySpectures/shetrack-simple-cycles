@@ -1,6 +1,7 @@
 
 import { CycleStats } from "@/components/CycleStats";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
+import { CycleChart } from "@/components/CycleChart";
 
 const HomePage = () => {
   return (
@@ -12,6 +13,12 @@ const HomePage = () => {
       
       <div className="space-y-8">
         <CycleStats />
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Cycle Analysis</h2>
+          <CycleChart />
+        </div>
+        
         <div>
           <h2 className="text-xl font-semibold mb-4">This Month</h2>
           <PeriodCalendar />

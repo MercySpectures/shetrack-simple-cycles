@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { 
   format, 
   startOfMonth, 
@@ -32,7 +32,7 @@ export function PeriodCalendar() {
   
   const prevMonthDays = startDay > 0 
     ? eachDayOfInterval({
-        start: subMonths(monthStart, 1).setDate(monthStart.getDate() - startDay),
+        start: new Date(subMonths(monthStart, 1).setDate(monthStart.getDate() - startDay)),
         end: subMonths(monthStart, 1)
       }) 
     : [];
@@ -55,8 +55,6 @@ export function PeriodCalendar() {
   }
 
   const isPeriodDay = (date: Date) => {
-    const dateStr = format(date, "yyyy-MM-dd");
-    
     return cycles.some(cycle => {
       const start = parseISO(cycle.startDate);
       const end = parseISO(cycle.endDate);
@@ -66,8 +64,6 @@ export function PeriodCalendar() {
   };
 
   const isPredictedPeriodDay = (date: Date) => {
-    const dateStr = format(date, "yyyy-MM-dd");
-    
     return predictions.some(period => {
       const start = parseISO(period.startDate);
       const end = parseISO(period.endDate);
@@ -120,11 +116,11 @@ export function PeriodCalendar() {
                 <div
                   key={day.toString()}
                   className={cn(
-                    "calendar-day",
-                    isPeriod && "period",
-                    isPrediction && "prediction",
-                    isToday && "current",
-                    !isCurrentMonth && "inactive"
+                    "aspect-square flex items-center justify-center rounded-full text-sm transition-colors",
+                    isPeriod && "bg-primary text-primary-foreground font-medium",
+                    isPrediction && "border border-primary/70 text-primary-foreground",
+                    isToday && !isPeriod && !isPrediction && "bg-primary/20",
+                    !isCurrentMonth && "text-muted-foreground/50"
                   )}
                 >
                   {format(day, "d")}
