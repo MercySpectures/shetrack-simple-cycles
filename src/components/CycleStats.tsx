@@ -4,6 +4,7 @@ import { CalendarDays, Droplets, Egg, BarChart3 } from "lucide-react";
 import { usePeriodTracking } from "@/lib/period-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge"; // Added import for Badge
 
 export function CycleStats() {
   const { 

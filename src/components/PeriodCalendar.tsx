@@ -15,7 +15,7 @@ import {
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { usePeriodTracking } from "@/lib/period-context";
+import { usePeriodTracking, FlowIntensity } from "@/lib/period-context"; // Added FlowIntensity import
 import { Badge } from "@/components/ui/badge";
 
 export function PeriodCalendar() {
