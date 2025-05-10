@@ -1,14 +1,19 @@
 
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { CycleChart } from "@/components/CycleChart";
-import { CalendarDays, BarChart3 } from "lucide-react";
+import { CalendarDays, BarChart3, HeartPulse } from "lucide-react";
 
 const CalendarPage = () => {
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-center font-poppins">Calendar</h1>
-        <p className="text-muted-foreground text-center">Track and predict your cycle rhythm ✨</p>
+      <div className="mb-8 text-center">
+        <h1 className="text-2xl font-bold text-center font-poppins flex items-center justify-center gap-2">
+          <HeartPulse className="h-7 w-7 text-primary-foreground" />
+          <span className="bg-gradient-to-r from-primary-foreground to-primary-foreground/80 bg-clip-text text-transparent">
+            Calendar
+          </span>
+        </h1>
+        <p className="text-muted-foreground">Track and predict your cycle rhythm ✨</p>
       </div>
       
       <div className="space-y-8">
@@ -22,7 +27,7 @@ const CalendarPage = () => {
             <BarChart3 className="h-5 w-5 text-primary" />
             Cycle Analysis
           </h2>
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-primary/10">
+          <div className="rounded-xl overflow-hidden shadow-sm">
             <CycleChart />
           </div>
         </div>

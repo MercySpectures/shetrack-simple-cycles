@@ -2,14 +2,17 @@
 import { CycleStats } from "@/components/CycleStats";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { CycleChart } from "@/components/CycleChart";
-import { CalendarDays, BarChart3 } from "lucide-react";
+import { CalendarDays, BarChart3, HeartPulse } from "lucide-react";
 
 const HomePage = () => {
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2 font-poppins bg-gradient-to-r from-primary-foreground to-primary-foreground/80 bg-clip-text text-transparent">
-          SheTrack
+        <h1 className="text-3xl font-bold mb-2 font-poppins flex items-center justify-center gap-2">
+          <HeartPulse className="h-8 w-8 text-primary-foreground" />
+          <span className="bg-gradient-to-r from-primary-foreground to-primary-foreground/80 bg-clip-text text-transparent">
+            SheTrack
+          </span>
         </h1>
         <p className="text-muted-foreground">Simple period tracking, just for you ✨</p>
       </div>
@@ -34,7 +37,7 @@ const HomePage = () => {
             <BarChart3 className="h-5 w-5 text-primary" />
             Cycle Analysis
           </h2>
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-primary/10">
+          <div className="rounded-xl overflow-hidden shadow-sm">
             <CycleChart />
           </div>
         </div>

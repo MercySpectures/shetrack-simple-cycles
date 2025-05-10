@@ -4,6 +4,8 @@ import { usePeriodTracking } from "@/lib/period-context";
 import { format, parseISO, differenceInDays } from "date-fns";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useTheme } from "@/lib/theme-provider";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
 
 type ChartDataItem = {
   month: string;
@@ -13,6 +15,7 @@ type ChartDataItem = {
 
 export function CycleChart() {
   const { cycles, getAverageCycleLength, getAveragePeriodLength } = usePeriodTracking();
+  const { theme } = useTheme();
   
   // Create chart data from cycles
   const chartData: ChartDataItem[] = [];
@@ -52,11 +55,29 @@ export function CycleChart() {
     });
   }
   
+  // Chart config for colors
+  const chartConfig = {
+    cycleLength: {
+      label: "Cycle Length",
+      theme: {
+        light: "#9b87f5",
+        dark: "#b59dff"
+      }
+    },
+    periodLength: {
+      label: "Period Length",
+      theme: {
+        light: "#FFA5BA",
+        dark: "#FF8AAB" 
+      }
+    }
+  };
+  
   // If no data, show placeholder
   if (chartData.length === 0) {
     return (
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden border-primary/20">
+        <CardHeader className="bg-gradient-to-r from-primary/10 to-secondary/10">
           <CardTitle>Cycle Analysis</CardTitle>
           <CardDescription>Track your cycle patterns over time</CardDescription>
         </CardHeader>
@@ -68,30 +89,58 @@ export function CycleChart() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden border-primary/20">
+      <CardHeader className="bg-gradient-to-r from-primary/10 to-secondary/10">
         <CardTitle>Cycle Analysis</CardTitle>
         <CardDescription>Track your cycle patterns over time</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-[200px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="month" />
-              <YAxis allowDecimals={false} />
-              <Tooltip 
-                formatter={(value: any) => `${value} days`}
-                labelStyle={{ color: 'var(--foreground)' }}
-                contentStyle={{ 
-                  backgroundColor: 'var(--card)',
-                  border: '1px solid var(--border)'
-                }}
+      <CardContent className="pt-6">
+        <div className="h-[250px]">
+          <ChartContainer 
+            config={chartConfig}
+            className="[&_.recharts-cartesian-grid-horizontal_line]:stroke-border/30
+                       [&_.recharts-cartesian-grid-vertical_line]:stroke-border/0
+                       [&_.recharts-cartesian-axis-line]:stroke-border/50
+                       [&_.recharts-xAxis_.recharts-cartesian-axis-tick-value]:fill-muted-foreground
+                       [&_.recharts-yAxis_.recharts-cartesian-axis-tick-value]:fill-muted-foreground"
+          >
+            <BarChart data={chartData} barGap={4}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+              <XAxis 
+                dataKey="month" 
+                axisLine={true} 
+                tickLine={false}
+                fontSize={12}
               />
-              <Bar dataKey="length" fill="#9b87f5" name="Cycle Length" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="periodLength" fill="#FDE1D3" name="Period Length" radius={[4, 4, 0, 0]} />
+              <YAxis 
+                allowDecimals={false} 
+                axisLine={true} 
+                tickLine={false} 
+                fontSize={12}
+              />
+              <ChartTooltip 
+                content={
+                  <ChartTooltipContent 
+                    nameKey="label"
+                    labelKey="month"
+                    formatter={(value) => `${value} days`}
+                  />
+                }
+              />
+              <Bar 
+                dataKey="length" 
+                name="cycleLength" 
+                radius={[4, 4, 0, 0]} 
+                fillOpacity={0.9}
+              />
+              <Bar 
+                dataKey="periodLength" 
+                name="periodLength" 
+                radius={[4, 4, 0, 0]} 
+                fillOpacity={0.9}
+              />
             </BarChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </div>
       </CardContent>
     </Card>
