@@ -3,7 +3,6 @@ import React from "react";
 import { usePeriodTracking } from "@/lib/period-context";
 import { format, parseISO, differenceInDays } from "date-fns";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 type ChartDataItem = {
@@ -67,17 +66,6 @@ export function CycleChart() {
       </Card>
     );
   }
-  
-  const chartConfig = {
-    length: {
-      label: "Cycle Length",
-      color: "#9b87f5"
-    },
-    periodLength: {
-      label: "Period Length",
-      color: "#FDE1D3"
-    }
-  };
 
   return (
     <Card>
@@ -87,25 +75,23 @@ export function CycleChart() {
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
-          <ChartContainer config={chartConfig}>
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="month" />
               <YAxis allowDecimals={false} />
-              <ChartTooltip
-                content={(props) => (
-                  <ChartTooltipContent
-                    {...props}
-                    formatter={(value, name) => {
-                      return `${value} days`;
-                    }}
-                  />
-                )}
+              <Tooltip 
+                formatter={(value: any) => `${value} days`}
+                labelStyle={{ color: 'var(--foreground)' }}
+                contentStyle={{ 
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)'
+                }}
               />
               <Bar dataKey="length" fill="#9b87f5" name="Cycle Length" radius={[4, 4, 0, 0]} />
               <Bar dataKey="periodLength" fill="#FDE1D3" name="Period Length" radius={[4, 4, 0, 0]} />
             </BarChart>
-          </ChartContainer>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
