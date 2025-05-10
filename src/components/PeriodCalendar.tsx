@@ -12,11 +12,17 @@ import {
   parseISO,
   isWithinInterval
 } from "date-fns";
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, Droplets, Sparkles, Egg } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { usePeriodTracking, FlowIntensity } from "@/lib/period-context"; // Added FlowIntensity import
+import { usePeriodTracking, FlowIntensity } from "@/lib/period-context";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function PeriodCalendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -100,121 +106,176 @@ export function PeriodCalendar() {
     return null;
   };
 
+  // Get emoji based on day type
+  const getDayEmoji = (date: Date): string | null => {
+    if (isOvulationDay(date)) return "✨";
+    if (isPeriodDay(date)) return "💧";
+    if (isFertileDay(date)) return "💫";
+    if (isPredictedPeriodDay(date)) return "📅";
+    return null;
+  };
+
+  const getDayTooltip = (date: Date): string => {
+    const dayType = [];
+    
+    if (isPeriodDay(date)) {
+      const flow = getDayFlowIntensity(date);
+      dayType.push(`Period day (${flow} flow)`);
+    }
+    
+    if (isPredictedPeriodDay(date) && !isPeriodDay(date)) {
+      dayType.push("Predicted period");
+    }
+    
+    if (isFertileDay(date)) {
+      dayType.push("Fertile window");
+    }
+    
+    if (isOvulationDay(date)) {
+      dayType.push("Ovulation day");
+    }
+    
+    if (isSameDay(date, new Date())) {
+      dayType.push("Today");
+    }
+    
+    return dayType.length ? dayType.join(" • ") : format(date, "MMMM d, yyyy");
+  };
+
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
   
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-6">
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
           onClick={prevMonth}
+          className="rounded-full hover:bg-primary/10"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-xl font-semibold flex items-center gap-2">
+        <h2 className="text-xl font-poppins font-semibold flex items-center gap-2">
           <CalendarDays className="h-5 w-5 text-primary" />
           {format(currentMonth, "MMMM yyyy")}
         </h2>
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
           onClick={nextMonth}
+          className="rounded-full hover:bg-primary/10"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
       
-      <div className="grid grid-cols-7 gap-1 text-center">
+      <div className="grid grid-cols-7 gap-1 text-center mb-2">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
-          <div key={day} className="text-xs font-medium text-muted-foreground py-2">
+          <div key={day} className="text-xs font-medium text-muted-foreground py-2 font-poppins">
             {day}
           </div>
         ))}
-        
-        {weeks.map((week, weekIndex) => (
-          <React.Fragment key={weekIndex}>
-            {week.map(day => {
-              const isPeriod = isPeriodDay(day);
-              const isPrediction = !isPeriod && isPredictedPeriodDay(day);
-              const isFertile = !isPeriod && !isPrediction && isFertileDay(day);
-              const isOvulation = !isPeriod && !isPrediction && isOvulationDay(day);
-              const isToday = isSameDay(day, new Date());
-              const isCurrentMonth = isSameMonth(day, currentMonth);
-              const flowIntensity = getDayFlowIntensity(day);
-              
-              return (
-                <div
-                  key={day.toString()}
-                  className={cn(
-                    "aspect-square flex items-center justify-center relative",
-                    isPeriod && "bg-primary text-primary-foreground font-medium rounded-full",
-                    isPrediction && "border border-primary/70 text-primary-foreground rounded-full",
-                    isFertile && "border border-blue-400/70 text-blue-500 rounded-full",
-                    isOvulation && "border-2 border-blue-500 text-blue-600 rounded-full font-medium",
-                    isToday && !isPeriod && !isPrediction && !isFertile && !isOvulation && "bg-primary/20 rounded-full",
-                    !isCurrentMonth && "text-muted-foreground/50"
-                  )}
-                >
-                  {format(day, "d")}
-                  
-                  {/* Flow indicator dot */}
-                  {flowIntensity && (
-                    <div 
-                      className={cn(
-                        "absolute -bottom-1 w-2 h-2 rounded-full mx-auto",
-                        flowIntensity === "light" && "bg-pink-300",
-                        flowIntensity === "medium" && "bg-pink-500",
-                        flowIntensity === "heavy" && "bg-pink-700"
-                      )}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </React.Fragment>
-        ))}
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1 text-center">
+        <TooltipProvider delayDuration={300}>
+          {weeks.map((week, weekIndex) => (
+            <React.Fragment key={weekIndex}>
+              {week.map(day => {
+                const isPeriod = isPeriodDay(day);
+                const isPrediction = !isPeriod && isPredictedPeriodDay(day);
+                const isFertile = !isPeriod && !isPrediction && isFertileDay(day);
+                const isOvulation = !isPeriod && !isPrediction && isOvulationDay(day);
+                const isToday = isSameDay(day, new Date());
+                const isCurrentMonth = isSameMonth(day, currentMonth);
+                const flowIntensity = getDayFlowIntensity(day);
+                const emoji = getDayEmoji(day);
+                const tooltipText = getDayTooltip(day);
+                
+                return (
+                  <Tooltip key={day.toString()}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          "aspect-square flex flex-col items-center justify-center relative p-1 transition-all duration-200",
+                          isPeriod && "bg-primary text-primary-foreground font-medium rounded-full shadow-sm",
+                          isPrediction && "border-2 border-primary/70 text-primary-foreground rounded-full",
+                          isFertile && "border-2 border-blue-400/70 text-blue-500 rounded-full",
+                          isOvulation && "border-2 border-blue-500 text-blue-600 rounded-full font-medium",
+                          isToday && !isPeriod && !isPrediction && !isFertile && !isOvulation && "bg-primary/20 rounded-full font-medium",
+                          !isCurrentMonth && "text-muted-foreground/50",
+                          "hover:scale-110 hover:z-10 cursor-pointer"
+                        )}
+                      >
+                        <span className="text-sm">{format(day, "d")}</span>
+                        {emoji && <span className="text-xs mt-0.5">{emoji}</span>}
+                        
+                        {/* Flow indicator dot with improved visibility */}
+                        {flowIntensity && (
+                          <div 
+                            className={cn(
+                              "absolute -bottom-1 w-2.5 h-2.5 rounded-full mx-auto shadow-sm",
+                              flowIntensity === "light" && "bg-pink-300",
+                              flowIntensity === "medium" && "bg-pink-500",
+                              flowIntensity === "heavy" && "bg-pink-700"
+                            )}
+                          />
+                        )}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="font-inter text-xs">
+                      {tooltipText}
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </React.Fragment>
+          ))}
+        </TooltipProvider>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-4 bg-gradient-to-r from-primary/5 to-secondary/5 p-4 rounded-lg">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-primary rounded-full"></div>
-          <span className="text-xs">Period</span>
+          <div className="w-4 h-4 bg-primary rounded-full"></div>
+          <span className="text-xs font-medium">Period</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 border border-primary/70 rounded-full"></div>
-          <span className="text-xs">Predicted</span>
+          <div className="w-4 h-4 border-2 border-primary/70 rounded-full"></div>
+          <span className="text-xs font-medium">Predicted</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 border border-blue-400/70 rounded-full"></div>
-          <span className="text-xs">Fertile</span>
+          <div className="w-4 h-4 border-2 border-blue-400/70 rounded-full"></div>
+          <span className="text-xs font-medium">Fertile</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 border-2 border-blue-500 rounded-full"></div>
-          <span className="text-xs">Ovulation</span>
+          <div className="w-4 h-4 border-2 border-blue-500 rounded-full"></div>
+          <span className="text-xs font-medium">Ovulation</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-primary/20 rounded-full"></div>
-          <span className="text-xs">Today</span>
+          <div className="w-4 h-4 bg-primary/20 rounded-full"></div>
+          <span className="text-xs font-medium">Today</span>
         </div>
       </div>
 
-      {/* Flow intensity legend */}
-      <div className="mt-4 border-t pt-4">
-        <p className="text-xs text-center mb-2 font-medium">Flow Intensity</p>
+      {/* Flow intensity legend with improved styling */}
+      <div className="mt-4 border-t border-primary/10 pt-4">
+        <p className="text-xs text-center mb-2 font-medium flex items-center justify-center gap-1">
+          <Droplets className="h-3 w-3 text-primary" />
+          Flow Intensity
+        </p>
         <div className="flex items-center justify-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-pink-300 rounded-full"></div>
-            <span className="text-xs">Light</span>
+            <div className="w-3 h-3 bg-pink-300 rounded-full shadow-sm"></div>
+            <span className="text-xs font-medium">Light</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-            <span className="text-xs">Medium</span>
+            <div className="w-3 h-3 bg-pink-500 rounded-full shadow-sm"></div>
+            <span className="text-xs font-medium">Medium</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-pink-700 rounded-full"></div>
-            <span className="text-xs">Heavy</span>
+            <div className="w-3 h-3 bg-pink-700 rounded-full shadow-sm"></div>
+            <span className="text-xs font-medium">Heavy</span>
           </div>
         </div>
       </div>

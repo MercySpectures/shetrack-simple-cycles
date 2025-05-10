@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Moon, Sun, DownloadCloud, Trash2, Info } from "lucide-react";
+import { Moon, Sun, DownloadCloud, Trash2, Info, Heart, Shield, Calendar, Settings, User, Bell } from "lucide-react";
 import { usePeriodTracking } from "@/lib/period-context";
 import { toast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const SettingsPage = () => {
   const { theme, setTheme } = useTheme();
@@ -27,7 +27,62 @@ const SettingsPage = () => {
   
   const handleExportData = () => {
     try {
-      const dataStr = JSON.stringify(cycles, null, 2);
+      // Create a more human-readable format for export
+      const formattedData = cycles.map(cycle => {
+        const startDate = new Date(cycle.startDate).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        const endDate = new Date(cycle.endDate).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        const formattedDays = cycle.days.map(day => {
+          const date = new Date(day.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          
+          return {
+            date,
+            flow: day.flow,
+            symptoms: day.symptoms || []
+          };
+        });
+        
+        return {
+          period: {
+            start: startDate,
+            end: endDate
+          },
+          cycleLength: cycle.cycleLength,
+          periodLength: cycle.periodLength,
+          days: formattedDays
+        };
+      });
+      
+      // Create formatted JSON with indentation
+      const dataStr = JSON.stringify({
+        userData: {
+          totalCycles: cycles.length,
+          exportDate: new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }),
+          cycles: formattedData
+        }
+      }, null, 2);
+      
       const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
       
       const exportFileDefaultName = `shetrack-data-${new Date().toISOString().slice(0, 10)}.json`;
@@ -38,8 +93,8 @@ const SettingsPage = () => {
       linkElement.click();
       
       toast({
-        title: "Data Exported",
-        description: "Your period tracking data has been exported successfully.",
+        title: "Data Exported Successfully",
+        description: "Your period tracking data has been exported in a readable format.",
       });
     } catch (error) {
       toast({
@@ -53,44 +108,53 @@ const SettingsPage = () => {
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Customize your experience</p>
+        <h1 className="text-2xl font-bold font-poppins flex items-center justify-center gap-2">
+          <Settings className="h-5 w-5 text-primary" />
+          Settings
+        </h1>
+        <p className="text-muted-foreground text-center">Customize your experience ✨</p>
       </div>
       
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Appearance</CardTitle>
+        <Card className="overflow-hidden border-primary/10">
+          <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5">
+            <CardTitle className="text-lg font-poppins flex items-center gap-2">
+              <Sun className="h-4 w-4 text-primary" />
+              Appearance
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="theme">Dark Mode</Label>
+                <Label htmlFor="theme" className="font-medium">Dark Mode</Label>
                 <p className="text-sm text-muted-foreground">
                   Switch between light and dark theme
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Sun className="h-4 w-4 text-muted-foreground" />
+                <Sun className="h-4 w-4 text-amber-500" />
                 <Switch
                   id="theme"
                   checked={theme === "dark"}
                   onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
                 />
-                <Moon className="h-4 w-4 text-muted-foreground" />
+                <Moon className="h-4 w-4 text-indigo-400" />
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Data Management</CardTitle>
+        <Card className="overflow-hidden border-primary/10">
+          <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5">
+            <CardTitle className="text-lg font-poppins flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-primary" />
+              Data Management
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="pt-4 space-y-4">
             <Button 
               variant="outline" 
-              className="w-full flex gap-2" 
+              className="w-full flex gap-2 hover:bg-primary/5" 
               onClick={handleExportData}
               disabled={cycles.length === 0}
             >
@@ -99,7 +163,7 @@ const SettingsPage = () => {
             </Button>
             <Button 
               variant="outline" 
-              className="w-full text-destructive hover:text-destructive flex gap-2"
+              className="w-full text-destructive hover:text-destructive hover:bg-red-50 flex gap-2"
               onClick={handleClearData}
               disabled={cycles.length === 0}
             >
@@ -109,43 +173,46 @@ const SettingsPage = () => {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Info className="h-4 w-4" />
+        <Card className="overflow-hidden border-primary/10">
+          <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5">
+            <CardTitle className="text-lg font-poppins flex items-center gap-2">
+              <Info className="h-4 w-4 text-primary" />
               About
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
+          <CardContent className="pt-4">
+            <p className="text-sm font-medium">
               SheTrack v1.0.0 - A simple, clean, and efficient period tracker.
             </p>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+              <Shield className="h-3 w-3" />
               Your data is stored locally on your device for complete privacy.
-              No personal information is collected or shared with third parties.
             </p>
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Features:</h3>
+            <div className="mt-6">
+              <h3 className="text-sm font-medium mb-3 flex items-center gap-1">
+                <Heart className="h-4 w-4 text-pink-500" />
+                Features:
+              </h3>
               <ul className="text-sm space-y-2">
-                <li className="flex gap-2">
+                <li className="flex gap-2 items-center">
                   <span className="text-primary-foreground">✓</span>
-                  <span>Period tracking</span>
+                  <span>Period tracking and predictions</span>
                 </li>
-                <li className="flex gap-2">
+                <li className="flex gap-2 items-center">
                   <span className="text-primary-foreground">✓</span>
-                  <span>Cycle analysis and predictions</span>
+                  <span>Cycle analysis and insights</span>
                 </li>
-                <li className="flex gap-2">
+                <li className="flex gap-2 items-center">
                   <span className="text-primary-foreground">✓</span>
-                  <span>Fertility window & ovulation prediction</span>
+                  <span>Fertility window & ovulation forecasts</span>
                 </li>
-                <li className="flex gap-2">
+                <li className="flex gap-2 items-center">
                   <span className="text-primary-foreground">✓</span>
                   <span>Symptom & mood tracking</span>
                 </li>
-                <li className="flex gap-2">
+                <li className="flex gap-2 items-center">
                   <span className="text-primary-foreground">✓</span>
-                  <span>Local data export</span>
+                  <span>Human-readable data export</span>
                 </li>
               </ul>
             </div>
