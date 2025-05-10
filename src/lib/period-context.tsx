@@ -17,6 +17,8 @@ export interface PeriodCycle {
   startDate: string;
   endDate: string;
   days: PeriodDay[];
+  cycleLength?: number;
+  periodLength?: number;
 }
 
 export interface FertilityWindow {

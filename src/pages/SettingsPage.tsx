@@ -63,8 +63,8 @@ const SettingsPage = () => {
             start: startDate,
             end: endDate
           },
-          cycleLength: cycle.cycleLength,
-          periodLength: cycle.periodLength,
+          cycleLength: cycle.cycleLength || 0,
+          periodLength: cycle.periodLength || 0,
           days: formattedDays
         };
       });
