@@ -28,7 +28,7 @@ const CalendarPage = () => {
         <p className="text-muted-foreground">Track and predict your cycle rhythm ✨</p>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+      <Tabs defaultValue="calendar" value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="grid w-full grid-cols-4 h-12">
           <TabsTrigger value="calendar" className="flex items-center gap-1">
             <CalendarDays className="h-4 w-4" />
@@ -47,9 +47,7 @@ const CalendarPage = () => {
             <span className="hidden sm:inline">Settings</span>
           </TabsTrigger>
         </TabsList>
-      </Tabs>
       
-      <div className="space-y-8">
         <TabsContent value="calendar" className="space-y-8 mt-0">
           <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-xl">
             <PeriodCalendar onDateSelect={setSelectedDate} />
@@ -88,7 +86,7 @@ const CalendarPage = () => {
         <TabsContent value="preferences" className="mt-0">
           <UserPreferencesForm />
         </TabsContent>
-      </div>
+      </Tabs>
     </div>
   );
 };
