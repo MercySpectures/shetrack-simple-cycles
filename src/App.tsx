@@ -13,6 +13,7 @@ import CalendarPage from "./pages/CalendarPage";
 import AddPeriodPage from "./pages/AddPeriodPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
+import AboutPage from "./pages/AboutPage";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/add-period" element={<AddPeriodPage />} />
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

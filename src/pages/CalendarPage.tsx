@@ -2,16 +2,10 @@
 import { useState } from "react";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { CycleChart } from "@/components/CycleChart";
-import { PeriodNotes } from "@/components/PeriodNotes";
-import { Reminders } from "@/components/Reminders"; 
-import { UserPreferencesForm } from "@/components/UserPreferencesForm";
-import { CalendarDays, BarChart3, HeartPulse, BellRing, CalendarPlus, ScrollText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { HeartPulse, CalendarDays, BarChart3 } from "lucide-react";
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [activeTab, setActiveTab] = useState("calendar");
 
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
@@ -28,65 +22,29 @@ const CalendarPage = () => {
         <p className="text-muted-foreground">Track and predict your cycle rhythm ✨</p>
       </div>
       
-      <Tabs defaultValue="calendar" value={activeTab} onValueChange={setActiveTab} className="mb-6">
-        <TabsList className="grid w-full grid-cols-4 h-12">
-          <TabsTrigger value="calendar" className="flex items-center gap-1">
-            <CalendarDays className="h-4 w-4" />
-            <span className="hidden sm:inline">Calendar</span>
-          </TabsTrigger>
-          <TabsTrigger value="notes" className="flex items-center gap-1">
-            <ScrollText className="h-4 w-4" />
-            <span className="hidden sm:inline">Notes</span>
-          </TabsTrigger>
-          <TabsTrigger value="reminders" className="flex items-center gap-1">
-            <BellRing className="h-4 w-4" />
-            <span className="hidden sm:inline">Reminders</span>
-          </TabsTrigger>
-          <TabsTrigger value="preferences" className="flex items-center gap-1">
-            <CalendarPlus className="h-4 w-4" />
-            <span className="hidden sm:inline">Settings</span>
-          </TabsTrigger>
-        </TabsList>
-      
-        <TabsContent value="calendar" className="space-y-8 mt-0">
+      <div className="space-y-10">
+        <div>
+          <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 font-poppins">
+            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
+            <CalendarDays className="h-5 w-5 text-primary" />
+            Monthly Overview
+          </h2>
           <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-xl">
             <PeriodCalendar onDateSelect={setSelectedDate} />
           </div>
+        </div>
           
-          <div className="mt-10">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 font-poppins">
-              <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
-              <BarChart3 className="h-5 w-5 text-primary" />
-              Cycle Analysis
-            </h2>
-            <div className="rounded-xl overflow-hidden shadow-sm">
-              <CycleChart />
-            </div>
+        <div>
+          <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 font-poppins">
+            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Cycle Analysis
+          </h2>
+          <div className="rounded-xl overflow-hidden shadow-sm">
+            <CycleChart />
           </div>
-        </TabsContent>
-        
-        <TabsContent value="notes" className="mt-0">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
-            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
-            <ScrollText className="h-5 w-5 text-primary" />
-            Notes for {selectedDate ? selectedDate.toLocaleDateString() : "Today"}
-          </h2>
-          <PeriodNotes date={selectedDate} />
-        </TabsContent>
-        
-        <TabsContent value="reminders" className="mt-0">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
-            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
-            <BellRing className="h-5 w-5 text-primary" />
-            Reminders
-          </h2>
-          <Reminders />
-        </TabsContent>
-        
-        <TabsContent value="preferences" className="mt-0">
-          <UserPreferencesForm />
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 };
