@@ -1,34 +1,19 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { addDays, differenceInDays, format, parseISO, isBefore, isAfter, isWithinInterval } from "date-fns";
-
-// Types
-export type FlowIntensity = "light" | "medium" | "heavy";
-
-export interface PeriodDay {
-  date: string;
-  flow: FlowIntensity;
-  symptoms?: string[];
-  mood?: "happy" | "neutral" | "sad";
-}
-
-export interface PeriodCycle {
-  id: string;
-  startDate: string;
-  endDate: string;
-  days: PeriodDay[];
-  cycleLength?: number;
-  periodLength?: number;
-}
-
-export interface FertilityWindow {
-  ovulationDate: string;
-  fertileStart: string;
-  fertileEnd: string;
-}
+import { 
+  FlowIntensity, 
+  PeriodDay, 
+  PeriodCycle, 
+  FertilityWindow, 
+  Reminder,
+  UserPreferences 
+} from "@/lib/types";
 
 interface PeriodContextType {
   cycles: PeriodCycle[];
+  reminders: Reminder[];
+  userPreferences: UserPreferences;
   addCycle: (startDate: string, endDate: string, days: PeriodDay[]) => void;
   updateCycle: (cycle: PeriodCycle) => void;
   deleteCycle: (id: string) => void;
@@ -43,9 +28,21 @@ interface PeriodContextType {
     isFertileDay: boolean;
     isOvulationDay: boolean;
   };
+  addReminder: (reminder: Omit<Reminder, "id">) => void;
+  updateReminder: (reminder: Reminder) => void;
+  deleteReminder: (id: string) => void;
+  updateUserPreferences: (preferences: Partial<UserPreferences>) => void;
+  addNoteToDay: (date: string, note: string) => void;
+  addNoteToCycle: (cycleId: string, note: string) => void;
 }
 
 const PeriodContext = createContext<PeriodContextType | undefined>(undefined);
+
+const DEFAULT_PREFERENCES: UserPreferences = {
+  averageCycleLength: 28,
+  averagePeriodLength: 5,
+  lastUpdated: new Date().toISOString(),
+};
 
 export function PeriodProvider({ children }: { children: React.ReactNode }) {
   const [cycles, setCycles] = useState<PeriodCycle[]>(() => {
@@ -53,9 +50,27 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
     return savedCycles ? JSON.parse(savedCycles) : [];
   });
 
+  const [reminders, setReminders] = useState<Reminder[]>(() => {
+    const savedReminders = localStorage.getItem("shetrack-reminders");
+    return savedReminders ? JSON.parse(savedReminders) : [];
+  });
+
+  const [userPreferences, setUserPreferences] = useState<UserPreferences>(() => {
+    const savedPreferences = localStorage.getItem("shetrack-preferences");
+    return savedPreferences ? JSON.parse(savedPreferences) : DEFAULT_PREFERENCES;
+  });
+
   useEffect(() => {
     localStorage.setItem("shetrack-cycles", JSON.stringify(cycles));
   }, [cycles]);
+
+  useEffect(() => {
+    localStorage.setItem("shetrack-reminders", JSON.stringify(reminders));
+  }, [reminders]);
+
+  useEffect(() => {
+    localStorage.setItem("shetrack-preferences", JSON.stringify(userPreferences));
+  }, [userPreferences]);
 
   const addCycle = (startDate: string, endDate: string, days: PeriodDay[]) => {
     const newCycle: PeriodCycle = {
@@ -63,26 +78,76 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
       startDate,
       endDate,
       days,
+      periodLength: differenceInDays(new Date(endDate), new Date(startDate)) + 1
     };
     
-    setCycles(prevCycles => [...prevCycles, newCycle].sort(
-      (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-    ));
+    setCycles(prevCycles => {
+      const updatedCycles = [...prevCycles, newCycle].sort(
+        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      );
+
+      // Calculate cycle lengths for adjacent periods
+      if (updatedCycles.length > 1) {
+        return updatedCycles.map((cycle, index) => {
+          if (index === 0) return cycle;
+          
+          const prevCycle = updatedCycles[index - 1];
+          const cycleLength = differenceInDays(
+            new Date(cycle.startDate),
+            new Date(prevCycle.startDate)
+          );
+          
+          return { ...cycle, cycleLength };
+        });
+      }
+      
+      return updatedCycles;
+    });
   };
 
   const updateCycle = (updatedCycle: PeriodCycle) => {
-    setCycles(prevCycles => 
-      prevCycles.map(cycle => 
+    setCycles(prevCycles => {
+      const updatedCycles = prevCycles.map(cycle => 
         cycle.id === updatedCycle.id ? updatedCycle : cycle
-      )
-    );
+      );
+
+      // Recalculate cycle lengths after update
+      return updatedCycles.map((cycle, index) => {
+        if (index === 0) return cycle;
+        
+        const prevCycle = updatedCycles[index - 1];
+        const cycleLength = differenceInDays(
+          new Date(cycle.startDate),
+          new Date(prevCycle.startDate)
+        );
+        
+        return { ...cycle, cycleLength };
+      });
+    });
   };
 
   const deleteCycle = (id: string) => {
-    setCycles(prevCycles => prevCycles.filter(cycle => cycle.id !== id));
+    setCycles(prevCycles => {
+      const filteredCycles = prevCycles.filter(cycle => cycle.id !== id);
+
+      // Recalculate cycle lengths after deletion
+      return filteredCycles.map((cycle, index) => {
+        if (index === 0) return cycle;
+        
+        const prevCycle = filteredCycles[index - 1];
+        const cycleLength = differenceInDays(
+          new Date(cycle.startDate),
+          new Date(prevCycle.startDate)
+        );
+        
+        return { ...cycle, cycleLength };
+      });
+    });
   };
 
   const getAverageCycleLength = () => {
+    if (userPreferences.averageCycleLength) return userPreferences.averageCycleLength;
+    
     if (cycles.length < 2) return 28; // Default cycle length
     
     let totalLength = 0;
@@ -103,6 +168,8 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getAveragePeriodLength = () => {
+    if (userPreferences.averagePeriodLength) return userPreferences.averagePeriodLength;
+    
     if (cycles.length === 0) return 5; // Default period length
     
     let totalLength = 0;
@@ -123,8 +190,8 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
   const getPredictedPeriods = (months = 3) => {
     if (cycles.length === 0) return [];
     
-    const avgCycleLength = getAverageCycleLength();
-    const avgPeriodLength = getAveragePeriodLength();
+    const avgCycleLength = userPreferences.averageCycleLength || getAverageCycleLength();
+    const avgPeriodLength = userPreferences.averagePeriodLength || getAveragePeriodLength();
     const predictions = [];
     
     // Start prediction from last period
@@ -146,7 +213,7 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
   const getFertilityWindows = (months = 3) => {
     if (cycles.length === 0) return [];
     
-    const avgCycleLength = getAverageCycleLength();
+    const avgCycleLength = userPreferences.averageCycleLength || getAverageCycleLength();
     const windows: FertilityWindow[] = [];
     
     // Start from the last period
@@ -248,10 +315,66 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
     };
   };
 
+  // Reminder functions
+  const addReminder = (reminder: Omit<Reminder, "id">) => {
+    const newReminder: Reminder = {
+      ...reminder,
+      id: Date.now().toString(),
+    };
+    setReminders(prev => [...prev, newReminder]);
+  };
+
+  const updateReminder = (updatedReminder: Reminder) => {
+    setReminders(prev => 
+      prev.map(reminder => 
+        reminder.id === updatedReminder.id ? updatedReminder : reminder
+      )
+    );
+  };
+
+  const deleteReminder = (id: string) => {
+    setReminders(prev => prev.filter(reminder => reminder.id !== id));
+  };
+
+  // User preferences functions
+  const updateUserPreferences = (preferences: Partial<UserPreferences>) => {
+    setUserPreferences(prev => ({
+      ...prev,
+      ...preferences,
+      lastUpdated: new Date().toISOString()
+    }));
+  };
+
+  // Notes functions
+  const addNoteToDay = (date: string, note: string) => {
+    setCycles(prevCycles => {
+      return prevCycles.map(cycle => {
+        const updatedDays = cycle.days.map(day => 
+          day.date === date ? { ...day, notes: note } : day
+        );
+        
+        return {
+          ...cycle,
+          days: updatedDays
+        };
+      });
+    });
+  };
+
+  const addNoteToCycle = (cycleId: string, note: string) => {
+    setCycles(prevCycles => {
+      return prevCycles.map(cycle => 
+        cycle.id === cycleId ? { ...cycle, notes: note } : cycle
+      );
+    });
+  };
+
   return (
     <PeriodContext.Provider
       value={{
         cycles,
+        reminders,
+        userPreferences,
         addCycle,
         updateCycle,
         deleteCycle,
@@ -259,7 +382,13 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
         getAveragePeriodLength,
         getPredictedPeriods,
         getFertilityWindows,
-        getCurrentCycleDayInfo
+        getCurrentCycleDayInfo,
+        addReminder,
+        updateReminder,
+        deleteReminder,
+        updateUserPreferences,
+        addNoteToDay,
+        addNoteToCycle
       }}
     >
       {children}

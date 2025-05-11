@@ -2,7 +2,16 @@
 import React from "react";
 import { usePeriodTracking } from "@/lib/period-context";
 import { format, parseISO, differenceInDays } from "date-fns";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  Legend
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useTheme } from "@/lib/theme-provider";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
@@ -60,15 +69,15 @@ export function CycleChart() {
     cycleLength: {
       label: "Cycle Length",
       theme: {
-        light: "#9b87f5",
-        dark: "#b59dff"
+        light: "url(#cycleGradient)",
+        dark: "url(#cycleGradientDark)"
       }
     },
     periodLength: {
       label: "Period Length",
       theme: {
-        light: "#FFA5BA",
-        dark: "#FF8AAB" 
+        light: "url(#periodGradient)",
+        dark: "url(#periodGradientDark)" 
       }
     }
   };
@@ -81,7 +90,7 @@ export function CycleChart() {
           <CardTitle>Cycle Analysis</CardTitle>
           <CardDescription>Track your cycle patterns over time</CardDescription>
         </CardHeader>
-        <CardContent className="h-[200px] flex items-center justify-center">
+        <CardContent className="h-[250px] flex items-center justify-center">
           <p className="text-muted-foreground">Add periods to see your cycle analysis</p>
         </CardContent>
       </Card>
@@ -95,52 +104,92 @@ export function CycleChart() {
         <CardDescription>Track your cycle patterns over time</CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        <div className="h-[250px]">
-          <ChartContainer 
-            config={chartConfig}
-            className="[&_.recharts-cartesian-grid-horizontal_line]:stroke-border/30
-                       [&_.recharts-cartesian-grid-vertical_line]:stroke-border/0
-                       [&_.recharts-cartesian-axis-line]:stroke-border/50
-                       [&_.recharts-xAxis_.recharts-cartesian-axis-tick-value]:fill-muted-foreground
-                       [&_.recharts-yAxis_.recharts-cartesian-axis-tick-value]:fill-muted-foreground"
-          >
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} barGap={4}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+              <defs>
+                <linearGradient id="cycleGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#9b87f5" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#b59dff" stopOpacity={0.8} />
+                </linearGradient>
+                <linearGradient id="periodGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FF8AAB" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#FFA5BA" stopOpacity={0.8} />
+                </linearGradient>
+                <linearGradient id="cycleGradientDark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#b59dff" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#9b87f5" stopOpacity={0.8} />
+                </linearGradient>
+                <linearGradient id="periodGradientDark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FF8AAB" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#FFA5BA" stopOpacity={0.8} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} strokeOpacity={0.3} />
               <XAxis 
                 dataKey="month" 
                 axisLine={true} 
                 tickLine={false}
                 fontSize={12}
+                stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
               />
               <YAxis 
                 allowDecimals={false} 
                 axisLine={true} 
                 tickLine={false} 
                 fontSize={12}
+                stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
               />
-              <ChartTooltip 
-                content={
-                  <ChartTooltipContent 
-                    nameKey="label"
-                    labelKey="month"
-                    formatter={(value) => `${value} days`}
-                  />
-                }
+              <Tooltip 
+                cursor={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className={`p-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-md shadow-md border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                        <p className="font-medium text-sm">{label}</p>
+                        {payload.map((entry, index) => (
+                          <p key={index} className="text-xs flex items-center gap-2 mt-1">
+                            <span 
+                              className="w-2 h-2 rounded-full"
+                              style={{ 
+                                backgroundColor: entry.name === "length" ? "#9b87f5" : "#FF8AAB"
+                              }}
+                            />
+                            <span className="font-medium">
+                              {entry.name === "length" ? "Cycle Length: " : "Period Length: "}
+                              {entry.value} days
+                            </span>
+                          </p>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend 
+                verticalAlign="top"
+                height={36}
+                formatter={(value) => {
+                  return value === "length" ? "Cycle Length" : "Period Length";
+                }}
               />
               <Bar 
                 dataKey="length" 
-                name="cycleLength" 
+                name="length" 
+                fill={theme === 'dark' ? "url(#cycleGradientDark)" : "url(#cycleGradient)"} 
                 radius={[4, 4, 0, 0]} 
-                fillOpacity={0.9}
+                maxBarSize={40}
               />
               <Bar 
                 dataKey="periodLength" 
                 name="periodLength" 
+                fill={theme === 'dark' ? "url(#periodGradientDark)" : "url(#periodGradient)"}
                 radius={[4, 4, 0, 0]} 
-                fillOpacity={0.9}
+                maxBarSize={40}
               />
             </BarChart>
-          </ChartContainer>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>

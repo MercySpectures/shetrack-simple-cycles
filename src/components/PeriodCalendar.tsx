@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { 
   format, 
   startOfMonth, 
@@ -15,7 +15,7 @@ import {
 import { ChevronLeft, ChevronRight, CalendarDays, Droplets, Sparkles, Egg } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { usePeriodTracking, FlowIntensity } from "@/lib/period-context";
+import { usePeriodTracking } from "@/lib/period-context";
 import { Badge } from "@/components/ui/badge";
 import { 
   Tooltip,
@@ -23,10 +23,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { FlowIntensity } from "@/lib/types";
 
-export function PeriodCalendar() {
+interface PeriodCalendarProps {
+  onDateSelect?: (date: Date) => void;
+}
+
+export function PeriodCalendar({ onDateSelect }: PeriodCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const { cycles, getPredictedPeriods, getFertilityWindows } = usePeriodTracking();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const { cycles, getPredictedPeriods, getFertilityWindows, userPreferences } = usePeriodTracking();
   
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -53,8 +59,9 @@ export function PeriodCalendar() {
   
   const allDays = [...prevMonthDays, ...daysInMonth, ...nextMonthDays];
   
-  const predictions = getPredictedPeriods(3);
-  const fertilityWindows = getFertilityWindows(3);
+  // Get more predicted periods (6 months) for better calendar visibility
+  const predictions = getPredictedPeriods(6);
+  const fertilityWindows = getFertilityWindows(6);
 
   // Group days into weeks for rendering
   const weeks: Date[][] = [];
@@ -142,6 +149,13 @@ export function PeriodCalendar() {
     return dayType.length ? dayType.join(" • ") : format(date, "MMMM d, yyyy");
   };
 
+  const handleDateSelect = useCallback((date: Date) => {
+    setSelectedDate(date);
+    if (onDateSelect) {
+      onDateSelect(date);
+    }
+  }, [onDateSelect]);
+
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
   
@@ -189,6 +203,7 @@ export function PeriodCalendar() {
                 const isOvulation = !isPeriod && !isPrediction && isOvulationDay(day);
                 const isToday = isSameDay(day, new Date());
                 const isCurrentMonth = isSameMonth(day, currentMonth);
+                const isSelected = selectedDate && isSameDay(day, selectedDate);
                 const flowIntensity = getDayFlowIntensity(day);
                 const emoji = getDayEmoji(day);
                 const tooltipText = getDayTooltip(day);
@@ -205,8 +220,10 @@ export function PeriodCalendar() {
                           isOvulation && "border-2 border-blue-500 text-blue-600 rounded-full font-medium",
                           isToday && !isPeriod && !isPrediction && !isFertile && !isOvulation && "bg-primary/20 rounded-full font-medium",
                           !isCurrentMonth && "text-muted-foreground/50",
+                          isSelected && "ring-2 ring-offset-2 ring-primary shadow-lg",
                           "hover:scale-110 hover:z-10 cursor-pointer"
                         )}
+                        onClick={() => handleDateSelect(day)}
                       >
                         <span className="text-sm">{format(day, "d")}</span>
                         {emoji && <span className="text-xs mt-0.5">{emoji}</span>}
@@ -235,49 +252,58 @@ export function PeriodCalendar() {
         </TooltipProvider>
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-4 bg-gradient-to-r from-primary/5 to-secondary/5 p-4 rounded-lg">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-primary rounded-full"></div>
-          <span className="text-xs font-medium">Period</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-primary/70 rounded-full"></div>
-          <span className="text-xs font-medium">Predicted</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-blue-400/70 rounded-full"></div>
-          <span className="text-xs font-medium">Fertile</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-blue-500 rounded-full"></div>
-          <span className="text-xs font-medium">Ovulation</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-primary/20 rounded-full"></div>
-          <span className="text-xs font-medium">Today</span>
+      <div className="mt-6 p-3 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg">
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3.5 h-3.5 bg-primary rounded-full"></div>
+            <span className="text-xs">Period</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3.5 h-3.5 border-2 border-primary/70 rounded-full"></div>
+            <span className="text-xs">Predicted</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3.5 h-3.5 border-2 border-blue-400/70 rounded-full"></div>
+            <span className="text-xs">Fertile</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3.5 h-3.5 border-2 border-blue-500 rounded-full"></div>
+            <span className="text-xs">Ovulation</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3.5 h-3.5 bg-primary/20 rounded-full"></div>
+            <span className="text-xs">Today</span>
+          </div>
         </div>
       </div>
 
       {/* Flow intensity legend with improved styling */}
-      <div className="mt-4 border-t border-primary/10 pt-4">
-        <p className="text-xs text-center mb-2 font-medium flex items-center justify-center gap-1">
+      <div className="mt-4 border-t border-primary/10 pt-3">
+        <p className="text-xs text-center mb-2 flex items-center justify-center gap-1">
           <Droplets className="h-3 w-3 text-primary" />
-          Flow Intensity
+          <span className="font-medium">Flow Intensity</span>
         </p>
         <div className="flex items-center justify-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-pink-300 rounded-full shadow-sm"></div>
-            <span className="text-xs font-medium">Light</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 bg-pink-300 rounded-full shadow-sm"></div>
+            <span className="text-xs">Light</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-pink-500 rounded-full shadow-sm"></div>
-            <span className="text-xs font-medium">Medium</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 bg-pink-500 rounded-full shadow-sm"></div>
+            <span className="text-xs">Medium</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-pink-700 rounded-full shadow-sm"></div>
-            <span className="text-xs font-medium">Heavy</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 bg-pink-700 rounded-full shadow-sm"></div>
+            <span className="text-xs">Heavy</span>
           </div>
         </div>
+      </div>
+
+      {/* Preferences info */}
+      <div className="mt-3 text-center">
+        <p className="text-xs text-muted-foreground">
+          Cycle length: {userPreferences.averageCycleLength} days • Period length: {userPreferences.averagePeriodLength} days
+        </p>
       </div>
     </div>
   );
