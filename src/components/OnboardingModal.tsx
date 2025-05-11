@@ -126,13 +126,14 @@ export function OnboardingModal() {
                     {lastPeriodDate ? format(lastPeriodDate, "MMMM d, yyyy") : <span>Select a date</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="center">
+                <PopoverContent className="w-auto p-0 pointer-events-auto" align="center">
                   <Calendar
                     mode="single"
                     selected={lastPeriodDate}
                     onSelect={setLastPeriodDate}
                     initialFocus
                     disabled={(date) => date > new Date()}
+                    className="pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>

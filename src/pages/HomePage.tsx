@@ -6,7 +6,7 @@ import { PeriodNotes } from "@/components/PeriodNotes";
 import { Reminders } from "@/components/Reminders";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { usePeriodTracking } from "@/lib/period-context";
-import { CalendarDays, BarChart3, HeartPulse, BellRing } from "lucide-react";
+import { CalendarDays, BarChart3, HeartPulse, BellRing, ScrollText } from "lucide-react";
 
 const HomePage = () => {
   const { userPreferences } = usePeriodTracking();
@@ -43,8 +43,21 @@ const HomePage = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
+            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
+            <ScrollText className="h-5 w-5 text-primary" />
+            Notes
+          </h2>
           <PeriodNotes />
+        </div>
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
+            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
+            <BellRing className="h-5 w-5 text-primary" />
+            Reminders
+          </h2>
           <Reminders />
         </div>
         

@@ -5,7 +5,7 @@ import { CycleChart } from "@/components/CycleChart";
 import { PeriodNotes } from "@/components/PeriodNotes";
 import { Reminders } from "@/components/Reminders"; 
 import { UserPreferencesForm } from "@/components/UserPreferencesForm";
-import { CalendarDays, BarChart3, HeartPulse, BellRing, CalendarPlus } from "lucide-react";
+import { CalendarDays, BarChart3, HeartPulse, BellRing, CalendarPlus, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -29,18 +29,22 @@ const CalendarPage = () => {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-        <TabsList className="grid w-full grid-cols-3 h-12">
+        <TabsList className="grid w-full grid-cols-4 h-12">
           <TabsTrigger value="calendar" className="flex items-center gap-1">
             <CalendarDays className="h-4 w-4" />
             <span className="hidden sm:inline">Calendar</span>
           </TabsTrigger>
-          <TabsTrigger value="preferences" className="flex items-center gap-1">
-            <CalendarPlus className="h-4 w-4" />
-            <span className="hidden sm:inline">Preferences</span>
+          <TabsTrigger value="notes" className="flex items-center gap-1">
+            <ScrollText className="h-4 w-4" />
+            <span className="hidden sm:inline">Notes</span>
           </TabsTrigger>
           <TabsTrigger value="reminders" className="flex items-center gap-1">
             <BellRing className="h-4 w-4" />
             <span className="hidden sm:inline">Reminders</span>
+          </TabsTrigger>
+          <TabsTrigger value="preferences" className="flex items-center gap-1">
+            <CalendarPlus className="h-4 w-4" />
+            <span className="hidden sm:inline">Settings</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -50,8 +54,6 @@ const CalendarPage = () => {
           <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-xl">
             <PeriodCalendar onDateSelect={setSelectedDate} />
           </div>
-          
-          <PeriodNotes date={selectedDate} />
           
           <div className="mt-10">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 font-poppins">
@@ -65,12 +67,26 @@ const CalendarPage = () => {
           </div>
         </TabsContent>
         
-        <TabsContent value="preferences" className="mt-0">
-          <UserPreferencesForm />
+        <TabsContent value="notes" className="mt-0">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
+            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
+            <ScrollText className="h-5 w-5 text-primary" />
+            Notes for {selectedDate ? selectedDate.toLocaleDateString() : "Today"}
+          </h2>
+          <PeriodNotes date={selectedDate} />
         </TabsContent>
         
         <TabsContent value="reminders" className="mt-0">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
+            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
+            <BellRing className="h-5 w-5 text-primary" />
+            Reminders
+          </h2>
           <Reminders />
+        </TabsContent>
+        
+        <TabsContent value="preferences" className="mt-0">
+          <UserPreferencesForm />
         </TabsContent>
       </div>
     </div>
