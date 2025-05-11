@@ -4,11 +4,18 @@ import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { CycleChart } from "@/components/CycleChart";
 import { PeriodNotes } from "@/components/PeriodNotes";
 import { Reminders } from "@/components/Reminders";
+import { OnboardingModal } from "@/components/OnboardingModal";
+import { usePeriodTracking } from "@/lib/period-context";
 import { CalendarDays, BarChart3, HeartPulse, BellRing } from "lucide-react";
 
 const HomePage = () => {
+  const { userPreferences } = usePeriodTracking();
+  const showOnboarding = !userPreferences.isOnboardingComplete;
+
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
+      {showOnboarding && <OnboardingModal />}
+      
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2 font-poppins flex items-center justify-center">
           <div className="relative">

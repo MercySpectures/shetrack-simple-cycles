@@ -89,52 +89,52 @@ export function Reminders() {
   });
   
   return (
-    <Card className="border-primary/20 overflow-hidden shadow-sm">
-      <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10">
+    <Card className="border-primary/20 overflow-hidden shadow-sm h-full">
+      <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10 p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bell className="h-5 w-5 text-primary" />
-            <CardTitle className="font-medium">Reminders</CardTitle>
+            <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <CardTitle className="font-medium text-sm sm:text-base">Reminders</CardTitle>
           </div>
           <Button 
             variant="ghost"
             size="sm"
-            className="h-8 flex items-center gap-1 hover:bg-primary/20"
+            className="h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm flex items-center gap-1 hover:bg-primary/20"
             onClick={() => setIsAdding(!isAdding)}
           >
-            {isAdding ? "Cancel" : <><Plus className="h-4 w-4" /> Add</>}
+            {isAdding ? "Cancel" : <><Plus className="h-3 w-3 sm:h-4 sm:w-4" /> Add</>}
           </Button>
         </div>
-        <CardDescription>
+        <CardDescription className="text-xs sm:text-sm">
           Set reminders for appointments or important cycle events
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-3 sm:p-4">
         {isAdding && (
-          <div className="space-y-3 mb-4 p-3 bg-muted/30 rounded-lg">
-            <div className="space-y-2">
-              <Label htmlFor="reminder-title">Title</Label>
+          <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4 p-2 sm:p-3 bg-muted/30 rounded-lg">
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="reminder-title" className="text-xs sm:text-sm">Title</Label>
               <Input
                 id="reminder-title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Appointment, medication, etc."
-                className="border-primary/20"
+                className="border-primary/20 h-8 sm:h-9 text-xs sm:text-sm"
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="reminder-date">Date</Label>
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="reminder-date" className="text-xs sm:text-sm">Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal border-primary/20",
+                      "w-full justify-start text-left font-normal border-primary/20 h-8 sm:h-9 text-xs sm:text-sm",
                       !date && "text-muted-foreground"
                     )}
                   >
-                    <CalendarPlus className="mr-2 h-4 w-4" />
+                    <CalendarPlus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                   </Button>
                 </PopoverTrigger>
@@ -149,34 +149,35 @@ export function Reminders() {
               </Popover>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="reminder-desc">Notes (optional)</Label>
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="reminder-desc" className="text-xs sm:text-sm">Notes (optional)</Label>
               <Textarea
                 id="reminder-desc"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Additional details..."
-                className="resize-none border-primary/20 h-20"
+                className="resize-none border-primary/20 h-16 sm:h-20 text-xs sm:text-sm"
               />
             </div>
             
             <Button 
-              className="w-full flex items-center gap-1" 
+              className="w-full flex items-center gap-1 h-8 sm:h-9 text-xs sm:text-sm" 
+              size="sm"
               onClick={handleAddReminder}
             >
-              <Plus className="h-4 w-4" /> Add Reminder
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4" /> Add Reminder
             </Button>
           </div>
         )}
         
         {sortedReminders.length > 0 ? (
-          <ScrollArea className="h-[250px] pr-4">
-            <div className="space-y-3">
+          <ScrollArea className="h-[180px] sm:h-[250px] pr-2 sm:pr-4">
+            <div className="space-y-2 sm:space-y-3">
               {sortedReminders.map((reminder) => (
                 <div 
                   key={reminder.id} 
                   className={cn(
-                    "flex items-start space-x-2 p-3 rounded-lg border", 
+                    "flex items-start space-x-2 p-2 sm:p-3 rounded-lg border", 
                     reminder.completed 
                       ? "border-muted bg-muted/30 text-muted-foreground" 
                       : "border-primary/20 bg-primary/5"
@@ -192,7 +193,7 @@ export function Reminders() {
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <h4 className={cn(
-                        "font-medium text-sm", 
+                        "font-medium text-xs sm:text-sm", 
                         reminder.completed && "line-through"
                       )}>
                         {reminder.title}
@@ -200,17 +201,17 @@ export function Reminders() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 w-6 p-0 rounded-full hover:bg-destructive/10 hover:text-destructive"
+                        className="h-5 w-5 sm:h-6 sm:w-6 p-0 rounded-full hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => handleDeleteReminder(reminder.id)}
                       >
-                        <Trash className="h-3.5 w-3.5" />
+                        <Trash className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">
                       {format(parseISO(reminder.date), "MMMM d, yyyy")}
                     </p>
                     {reminder.description && (
-                      <p className="text-sm mt-1 whitespace-pre-wrap">
+                      <p className="text-xs sm:text-sm mt-0.5 sm:mt-1 whitespace-pre-wrap">
                         {reminder.description}
                       </p>
                     )}
@@ -221,8 +222,8 @@ export function Reminders() {
           </ScrollArea>
         ) : (
           <div className="flex flex-col items-center justify-center h-[100px] text-center">
-            <Bell className="h-10 w-10 text-muted-foreground/50 mb-2" />
-            <p className="text-muted-foreground text-sm">
+            <Bell className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/50 mb-1 sm:mb-2" />
+            <p className="text-xs sm:text-sm text-muted-foreground">
               No reminders yet. Click the add button to create one.
             </p>
           </div>

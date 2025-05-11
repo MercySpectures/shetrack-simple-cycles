@@ -1,4 +1,3 @@
-
 export type FlowIntensity = "light" | "medium" | "heavy";
 
 export interface PeriodDay {
@@ -37,4 +36,5 @@ export interface UserPreferences {
   averageCycleLength: number;
   averagePeriodLength: number;
   lastUpdated: string;
+  isOnboardingComplete?: boolean;
 }

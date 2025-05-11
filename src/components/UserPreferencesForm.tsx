@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 export function UserPreferencesForm() {
   const { userPreferences, updateUserPreferences } = usePeriodTracking();
@@ -42,12 +43,34 @@ export function UserPreferencesForm() {
     updateUserPreferences({
       averageCycleLength: cycleLengthNum,
       averagePeriodLength: periodLengthNum,
+      isOnboardingComplete: true
     });
     
     toast({
       title: "Preferences updated",
       description: "Your cycle preferences have been saved successfully."
     });
+  };
+
+  // Prevent input of non-numeric characters
+  const handleNumberInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<string>>,
+    min: number,
+    max: number
+  ) => {
+    const value = e.target.value.replace(/[^\d]/g, "");
+    if (value === "") {
+      setter("");
+      return;
+    }
+
+    const num = parseInt(value, 10);
+    if (!isNaN(num)) {
+      if (num < min) setter(min.toString());
+      else if (num > max) setter(max.toString());
+      else setter(value);
+    }
   };
   
   return (
@@ -64,14 +87,28 @@ export function UserPreferencesForm() {
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="cycle-length">Average Cycle Length (days)</Label>
+            <div className="flex items-center gap-1">
+              <Label htmlFor="cycle-length">Average Cycle Length (days)</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-72 text-xs">
+                    <p>This is the number of days from the first day of one period to the first day of the next.</p>
+                    <p className="mt-1">The average menstrual cycle is 28 days, but cycles can range from 21 to 40 days.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Input
               id="cycle-length"
-              type="number"
+              type="text"
+              inputMode="numeric"
               min="21"
               max="40"
               value={cycleLength}
-              onChange={(e) => setCycleLength(e.target.value)}
+              onChange={(e) => handleNumberInput(e, setCycleLength, 21, 40)}
               className="border-primary/20"
             />
             <p className="text-xs text-muted-foreground">
@@ -80,14 +117,28 @@ export function UserPreferencesForm() {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="period-length">Average Period Length (days)</Label>
+            <div className="flex items-center gap-1">
+              <Label htmlFor="period-length">Average Period Length (days)</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-72 text-xs">
+                    <p>This is the number of days your period typically lasts.</p>
+                    <p className="mt-1">Most periods last between 3-7 days, but can be shorter or longer.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Input
               id="period-length"
-              type="number"
+              type="text"
+              inputMode="numeric"
               min="1"
               max="10"
               value={periodLength}
-              onChange={(e) => setPeriodLength(e.target.value)}
+              onChange={(e) => handleNumberInput(e, setPeriodLength, 1, 10)}
               className="border-primary/20"
             />
             <p className="text-xs text-muted-foreground">
