@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { format, addDays } from "date-fns";
 import { Calendar as CalendarIcon, Check } from "lucide-react";
@@ -30,11 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  usePeriodTracking, 
-  FlowIntensity, 
-  PeriodDay 
-} from "@/lib/period-context";
+import { usePeriodTracking } from "@/lib/period-context";
+import { FlowIntensity, PeriodDay } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
