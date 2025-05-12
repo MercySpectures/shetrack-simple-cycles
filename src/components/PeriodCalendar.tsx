@@ -106,7 +106,7 @@ export function PeriodCalendar({ onDateSelect }: PeriodCalendarProps) {
     for (const cycle of cycles) {
       const periodDay = cycle.days.find(day => day.date === dateStr);
       if (periodDay) {
-        return periodDay.flow;
+        return periodDay.flowIntensity || null;
       }
     }
     

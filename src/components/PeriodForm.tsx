@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { format, addDays } from "date-fns";
 import { Calendar as CalendarIcon, Check } from "lucide-react";
@@ -95,9 +96,9 @@ export function PeriodForm() {
     while (currentDate <= endDate) {
       days.push({
         date: format(currentDate, "yyyy-MM-dd"),
-        flow: flow as FlowIntensity,
+        flowIntensity: flow as FlowIntensity,
         symptoms: symptoms,
-        mood: mood,
+        mood: [mood],  // Convert the string to a string array
       });
       currentDate.setDate(currentDate.getDate() + 1);
     }

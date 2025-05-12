@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 export interface PeriodDay {
   id?: string;
   date: string;
-  flowIntensity?: FlowIntensity;
+  flowIntensity?: FlowIntensity;  // Keep this as flowIntensity
   symptoms?: string[];
   mood?: string[];
   notes?: string[]; // Changed from string to string[] for multiple notes
@@ -32,11 +32,11 @@ export interface Reminder {
   description?: string;
   date: string;
   type: 'period' | 'fertility' | 'medication' | 'other';
-  isCompleted?: boolean;
+  isCompleted?: boolean;  // This was defined as isCompleted but used as completed in components
 }
 
 export interface UserPreferences {
-  userName: string; // Added userName field
+  userName: string;
   averageCycleLength: number;
   averagePeriodLength: number;
   lastUpdated: string;

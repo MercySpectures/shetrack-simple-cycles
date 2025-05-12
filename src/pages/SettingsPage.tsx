@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, differenceInDays } from "date-fns";
 import { usePeriodTracking } from "@/lib/period-context";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ const SettingsPage = () => {
           periodLength: cycle.periodLength || differenceInDays(parseISO(cycle.endDate), parseISO(cycle.startDate)) + 1,
           days: cycle.days.map(day => ({
             date: format(parseISO(day.date), "MMMM d, yyyy"),
-            flow: day.flow,
+            flowIntensity: day.flowIntensity,  // Changed from flow to flowIntensity
             symptoms: day.symptoms || [],
             mood: day.mood || "-",
             notes: day.notes || ""

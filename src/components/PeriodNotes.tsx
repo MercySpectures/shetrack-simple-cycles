@@ -20,7 +20,10 @@ export function PeriodNotes({ date }: { date?: Date }) {
   const findDayNote = () => {
     for (const cycle of cycles) {
       const day = cycle.days.find(d => d.date === dateStr);
-      if (day?.notes) return day.notes;
+      if (day?.notes) {
+        // Handle both string and string[] types
+        return Array.isArray(day.notes) ? day.notes.join('\n') : day.notes;
+      }
     }
     return "";
   };

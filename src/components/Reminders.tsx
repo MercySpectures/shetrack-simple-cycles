@@ -47,7 +47,8 @@ export function Reminders() {
       title: title.trim(),
       description: description.trim(),
       date: format(date, "yyyy-MM-dd"),
-      completed: false
+      type: 'other',  // Default type
+      isCompleted: false  // Changed from completed to isCompleted
     });
     
     toast({
@@ -62,12 +63,12 @@ export function Reminders() {
     setDate(new Date());
   };
   
-  const handleToggleComplete = (id: string, completed: boolean) => {
+  const handleToggleComplete = (id: string, isCompleted: boolean) => {
     const reminder = reminders.find(r => r.id === id);
     if (reminder) {
       updateReminder({
         ...reminder,
-        completed
+        isCompleted  // Changed from completed to isCompleted
       });
     }
   };
@@ -82,8 +83,8 @@ export function Reminders() {
   
   // Sort reminders: incomplete first, then by date
   const sortedReminders = [...reminders].sort((a, b) => {
-    if (a.completed !== b.completed) {
-      return a.completed ? 1 : -1;
+    if (a.isCompleted !== b.isCompleted) {
+      return a.isCompleted ? 1 : -1;  // Changed from completed to isCompleted
     }
     return new Date(a.date).getTime() - new Date(b.date).getTime();
   });
@@ -178,13 +179,13 @@ export function Reminders() {
                   key={reminder.id} 
                   className={cn(
                     "flex items-start space-x-2 p-2 sm:p-3 rounded-lg border", 
-                    reminder.completed 
+                    reminder.isCompleted  // Changed from completed to isCompleted
                       ? "border-muted bg-muted/30 text-muted-foreground" 
                       : "border-primary/20 bg-primary/5"
                   )}
                 >
                   <Checkbox
-                    checked={reminder.completed}
+                    checked={reminder.isCompleted}  // Changed from completed to isCompleted
                     onCheckedChange={(checked) => 
                       handleToggleComplete(reminder.id, checked === true)
                     }
@@ -194,7 +195,7 @@ export function Reminders() {
                     <div className="flex items-start justify-between">
                       <h4 className={cn(
                         "font-medium text-xs sm:text-sm", 
-                        reminder.completed && "line-through"
+                        reminder.isCompleted && "line-through"  // Changed from completed to isCompleted
                       )}>
                         {reminder.title}
                       </h4>
