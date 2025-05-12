@@ -25,10 +25,10 @@ export function MobileNavbar() {
             to={item.path}
             className={cn(
               "flex flex-col items-center justify-center px-2 py-1 rounded-md transition-colors",
-              isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <item.icon className={cn("h-5 w-5", isActive && "text-primary-foreground")} />
+            <item.icon className={cn("h-5 w-5", isActive && "text-primary")} />
             <span className="text-xs mt-1">{item.title}</span>
           </Link>
         );

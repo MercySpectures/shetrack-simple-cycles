@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 20%;
 
-    --primary: 300 65% 55%;
+    --primary: 335 80% 65%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 252 75% 65%;
@@ -98,6 +98,10 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+  
+  h1.page-heading {
+    @apply text-primary font-bold font-poppins flex items-center gap-2;
   }
 }
 
