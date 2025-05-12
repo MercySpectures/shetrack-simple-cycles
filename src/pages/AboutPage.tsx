@@ -1,18 +1,19 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { HeartPulse, Github, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { HeartPulse, Github, Linkedin, Instagram, Mail, Phone, MapPin, Check, Shield, Calendar, Lock } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const AboutPage = () => {
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-center font-poppins flex items-center justify-center gap-2">
+        <h1 className="text-2xl font-bold text-center font-poppins flex items-center justify-center gap-2 page-heading">
           <div className="relative">
             <div className="absolute -top-1.5 -left-1.5 w-9 h-9 bg-pink-200 rounded-full animate-pulse opacity-50" />
-            <HeartPulse className="h-7 w-7 text-primary-foreground relative z-10" />
+            <HeartPulse className="h-7 w-7 text-primary relative z-10" />
           </div>
-          <span className="bg-gradient-to-r from-primary-foreground to-primary-foreground/80 bg-clip-text text-transparent ml-1">
+          <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent ml-1">
             About SheTrack
           </span>
         </h1>
@@ -44,6 +45,111 @@ const AboutPage = () => {
             </p>
           </CardContent>
         </Card>
+
+        {/* Features Section */}
+        <Card className="border-primary/20 overflow-hidden shadow-sm">
+          <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10">
+            <CardTitle className="font-medium">Key Features</CardTitle>
+            <CardDescription>What makes SheTrack special</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-1.5 rounded-full">
+                  <Calendar className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium">Cycle Tracking</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Track your period dates, flow intensity, and symptoms in a simple calendar view
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-1.5 rounded-full">
+                  <Check className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium">Personalized Predictions</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Get accurate predictions of your upcoming periods and fertile windows based on your unique patterns
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-1.5 rounded-full">
+                  <Shield className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium">Private & Secure</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Your data is stored locally on your device with the option to export for backup
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 p-1.5 rounded-full">
+                  <Lock className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium">Intuitive Reminders</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Set customizable reminders for your period start dates, fertile windows, and medication
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Privacy Policy Section */}
+        <Card className="border-primary/20 overflow-hidden shadow-sm">
+          <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10">
+            <CardTitle className="font-medium">Privacy Policy</CardTitle>
+            <CardDescription>How we protect your data</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="space-y-4 text-sm">
+              <p className="leading-relaxed">
+                At SheTrack, we take your privacy seriously. Our commitment to you:
+              </p>
+              
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <div className="min-w-4 mt-1">•</div>
+                  <p>All your period tracking data is stored locally on your device.</p>
+                </div>
+                
+                <div className="flex items-start gap-2">
+                  <div className="min-w-4 mt-1">•</div>
+                  <p>We do not collect or share your personal health information with third parties.</p>
+                </div>
+                
+                <div className="flex items-start gap-2">
+                  <div className="min-w-4 mt-1">•</div>
+                  <p>You maintain full control over your data with backup and export options.</p>
+                </div>
+                
+                <div className="flex items-start gap-2">
+                  <div className="min-w-4 mt-1">•</div>
+                  <p>SheTrack does not use your data for advertising or marketing purposes.</p>
+                </div>
+                
+                <div className="flex items-start gap-2">
+                  <div className="min-w-4 mt-1">•</div>
+                  <p>We use industry-standard security measures to protect any data you choose to backup.</p>
+                </div>
+              </div>
+              
+              <p className="text-xs text-muted-foreground mt-4">
+                For more detailed information about our privacy practices, please contact us directly.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
         
         <Card className="border-primary/20 overflow-hidden shadow-sm">
           <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10">
@@ -52,8 +158,18 @@ const AboutPage = () => {
           </CardHeader>
           <CardContent className="pt-6">
             <div className="flex flex-col items-center text-center sm:flex-row sm:text-left sm:items-start gap-4">
-              <div className="rounded-full bg-gradient-to-br from-primary to-secondary h-24 w-24 flex items-center justify-center text-white text-2xl font-bold">
-                AS
+              <div className="overflow-hidden rounded-full bg-gradient-to-br from-primary to-secondary h-24 w-24 flex items-center justify-center">
+                <img 
+                  src="/developer-photo.jpg" 
+                  alt="Aman Shrivas"
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>';
+                    target.classList.add('p-2');
+                  }}
+                />
               </div>
               <div className="space-y-4">
                 <div>
