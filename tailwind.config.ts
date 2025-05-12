@@ -72,6 +72,14 @@ export default {
         'she-purple': '#E5DEFF',
         'she-purple-light': '#D6BCFA',
         'she-gray': '#F1F0FB',
+        // Pie chart colors
+        'chart-blue': '#7EB0FF',
+        'chart-purple': '#9B87F5',
+        'chart-pink': '#F9A8D4',
+        'chart-green': '#86EFAC',
+        'chart-yellow': '#FBBF24',
+        'chart-orange': '#FB923C',
+        'chart-teal': '#2DD4BF',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -96,8 +104,8 @@ export default {
           }
         },
         "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" }
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
         }
       },
       animation: {

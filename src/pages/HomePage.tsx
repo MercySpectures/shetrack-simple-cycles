@@ -5,12 +5,14 @@ import { CycleChart } from "@/components/CycleChart";
 import { PeriodNotes } from "@/components/PeriodNotes";
 import { Reminders } from "@/components/Reminders";
 import { OnboardingModal } from "@/components/OnboardingModal";
+import { CycleNotifications } from "@/components/CycleNotifications";
 import { usePeriodTracking } from "@/lib/period-context";
 import { CalendarDays, BarChart3, HeartPulse, BellRing, ScrollText } from "lucide-react";
 
 const HomePage = () => {
-  const { userPreferences } = usePeriodTracking();
+  const { userPreferences, cycles } = usePeriodTracking();
   const showOnboarding = !userPreferences.isOnboardingComplete;
+  const hasCycleData = cycles.length > 0;
 
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
@@ -31,8 +33,11 @@ const HomePage = () => {
         </p>
       </div>
       
+      {/* Show notifications */}
+      <CycleNotifications />
+      
       <div className="space-y-8">
-        <CycleStats />
+        {hasCycleData && <CycleStats />}
         
         <div>
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
@@ -63,16 +68,18 @@ const HomePage = () => {
           <Reminders />
         </div>
         
-        <div>
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
-            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
-            <BarChart3 className="h-5 w-5 text-primary" />
-            Cycle Analysis
-          </h2>
-          <div className="rounded-xl overflow-hidden shadow-sm">
-            <CycleChart />
+        {hasCycleData && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
+              <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
+              <BarChart3 className="h-5 w-5 text-primary" />
+              Cycle Analysis
+            </h2>
+            <div className="rounded-xl overflow-hidden shadow-sm">
+              <CycleChart />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarDays, Pencil, Save } from "lucide-react";
+import { CalendarDays, Pencil, Save, Plus, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export function PeriodNotes({ date }: { date?: Date }) {
@@ -16,29 +16,36 @@ export function PeriodNotes({ date }: { date?: Date }) {
   const selectedDate = date || new Date();
   const dateStr = format(selectedDate, "yyyy-MM-dd");
   
-  // Find note for this day if it exists
-  const findDayNote = () => {
+  // Find notes for this day if they exist
+  const findDayNotes = () => {
     for (const cycle of cycles) {
       const day = cycle.days.find(d => d.date === dateStr);
       if (day?.notes) {
         // Handle both string and string[] types
-        return Array.isArray(day.notes) ? day.notes.join('\n') : day.notes;
+        return Array.isArray(day.notes) ? day.notes : [day.notes];
       }
     }
-    return "";
+    return [];
   };
   
-  const [note, setNote] = useState(findDayNote());
-  const [isEditing, setIsEditing] = useState(false);
+  const [notes, setNotes] = useState<string[]>(findDayNotes());
+  const [newNote, setNewNote] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
   
   useEffect(() => {
-    setNote(findDayNote());
-    setIsEditing(false);
+    setNotes(findDayNotes());
+    setIsAdding(false);
+    setNewNote("");
   }, [dateStr]);
   
-  const handleSave = () => {
-    addNoteToDay(dateStr, note);
-    setIsEditing(false);
+  const handleSaveNote = () => {
+    if (!newNote.trim()) return;
+    
+    const updatedNotes = [...notes, newNote.trim()];
+    addNoteToDay(dateStr, updatedNotes);
+    setNotes(updatedNotes);
+    setNewNote("");
+    setIsAdding(false);
     
     toast({
       title: "Note saved",
@@ -46,6 +53,17 @@ export function PeriodNotes({ date }: { date?: Date }) {
     });
   };
   
+  const handleDeleteNote = (index: number) => {
+    const updatedNotes = notes.filter((_, i) => i !== index);
+    addNoteToDay(dateStr, updatedNotes);
+    setNotes(updatedNotes);
+    
+    toast({
+      title: "Note deleted",
+      description: "Your note has been removed."
+    });
+  };
+
   return (
     <Card className="border-primary/20 overflow-hidden shadow-sm h-full">
       <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10 p-4 sm:p-6">
@@ -54,60 +72,72 @@ export function PeriodNotes({ date }: { date?: Date }) {
             <CalendarDays className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             <CardTitle className="font-medium text-sm sm:text-base">Notes</CardTitle>
           </div>
-          <span className="text-xs sm:text-sm font-medium">
-            {format(selectedDate, "MMM d, yyyy")}
-          </span>
+          <Button 
+            variant="ghost"
+            size="sm"
+            className="h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm flex items-center gap-1 hover:bg-primary/20"
+            onClick={() => setIsAdding(!isAdding)}
+          >
+            {isAdding ? "Cancel" : <><Plus className="h-3 w-3 sm:h-4 sm:w-4" /> Add</>}
+          </Button>
         </div>
         <CardDescription className="text-xs sm:text-sm">
           Track symptoms, mood, or anything else about your day
         </CardDescription>
       </CardHeader>
       <CardContent className="p-3 sm:p-4">
-        {isEditing ? (
-          <div className="space-y-3">
+        {isAdding && (
+          <div className="space-y-3 mb-4 p-3 bg-muted/30 rounded-lg">
             <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
               placeholder="Write your notes here..."
-              className="min-h-[120px] border-primary/20 resize-none text-sm"
+              className="min-h-[100px] border-primary/20 resize-none text-sm"
             />
             <div className="flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(false)} className="text-xs sm:text-sm h-8 sm:h-9">
-                Cancel
-              </Button>
               <Button 
                 className="flex items-center gap-1 text-xs sm:text-sm h-8 sm:h-9" 
                 size="sm"
-                onClick={handleSave}
+                onClick={handleSaveNote}
               >
                 <Save className="h-3 w-3 sm:h-4 sm:w-4" /> 
-                Save
+                Save Note
               </Button>
             </div>
-          </div>
-        ) : (
-          <div className="min-h-[120px]">
-            <div className="flex justify-end mb-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs flex items-center gap-1 h-6 sm:h-7"
-                onClick={() => setIsEditing(true)}
-              >
-                <Pencil className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Edit
-              </Button>
-            </div>
-            <ScrollArea className="h-[100px]">
-              {note ? (
-                <p className="whitespace-pre-wrap text-xs sm:text-sm">{note}</p>
-              ) : (
-                <p className="text-xs sm:text-sm text-muted-foreground italic">
-                  No notes for this day yet. Click edit to add notes.
-                </p>
-              )}
-            </ScrollArea>
           </div>
         )}
+        
+        <ScrollArea className="h-[240px] pr-2">
+          {notes.length > 0 ? (
+            <div className="space-y-3">
+              {notes.map((note, index) => (
+                <div key={index} className="note-item">
+                  <div className="note-item-header">
+                    <span className="text-xs text-muted-foreground">
+                      {format(selectedDate, "MMMM d, yyyy")} - Note {index + 1}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 rounded-full hover:bg-destructive/10 hover:text-destructive"
+                      onClick={() => handleDeleteNote(index)}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                  <p className="note-item-content">{note}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-[180px] text-center">
+              <CalendarDays className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/50 mb-2" />
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                No notes for this day yet. Click the add button to create one.
+              </p>
+            </div>
+          )}
+        </ScrollArea>
       </CardContent>
     </Card>
   );

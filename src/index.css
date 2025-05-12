@@ -16,14 +16,14 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 20%;
 
-    --primary: 300 87% 92%;
-    --primary-foreground: 300 10% 20%;
+    --primary: 300 65% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 252 100% 97%;
-    --secondary-foreground: 252 10% 20%;
+    --secondary: 252 75% 65%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 240 5% 96%;
-    --muted-foreground: 240 5% 50%;
+    --muted-foreground: 240 5% 45%;
 
     --accent: 252 100% 94%;
     --accent-foreground: 252 10% 25%;
@@ -57,10 +57,10 @@
     --popover: 232 22% 12%;
     --popover-foreground: 240 10% 95%;
 
-    --primary: 300 30% 40%;
+    --primary: 300 60% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 252 30% 30%;
+    --secondary: 252 60% 50%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 240 5% 25%;
@@ -136,5 +136,17 @@
 
   .flow-heavy {
     @apply bg-primary-foreground;
+  }
+  
+  .note-item {
+    @apply p-3 bg-background border border-border rounded-lg mb-3 relative;
+  }
+  
+  .note-item-header {
+    @apply flex justify-between items-center mb-2;
+  }
+  
+  .note-item-content {
+    @apply whitespace-pre-wrap text-sm;
   }
 }

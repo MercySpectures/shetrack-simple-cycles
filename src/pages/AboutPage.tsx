@@ -1,12 +1,9 @@
 
-import { HeartPulse, Info, Github, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
-import { usePeriodTracking } from "@/lib/period-context";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { HeartPulse, Github, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 const AboutPage = () => {
-  const { userPreferences } = usePeriodTracking();
-
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
       <div className="mb-8 text-center">
@@ -19,116 +16,101 @@ const AboutPage = () => {
             About SheTrack
           </span>
         </h1>
-        <p className="text-muted-foreground">
-          Hi {userPreferences.userName || "there"}, welcome to your period tracking companion ✨
+        <p className="text-muted-foreground mt-1 max-w-md mx-auto">
+          Your personal period tracking companion designed with care
         </p>
       </div>
       
-      <div className="space-y-6">
-        <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
-            <Info className="h-5 w-5 text-primary" />
-            Our Mission
-          </h2>
-          <p className="mb-4 text-muted-foreground">
-            SheTrack was designed with one simple goal: to provide an intuitive, private, 
-            and comprehensive period tracking solution that respects your privacy and helps 
-            you understand your body better.
-          </p>
-          <p className="text-muted-foreground">
-            We believe that period tracking should be simple, accessible, and empowering, 
-            giving you insights about your cycle without overwhelming you with complexity.
-          </p>
-        </div>
+      <div className="space-y-8">
+        <Card className="border-primary/20 overflow-hidden shadow-sm">
+          <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10">
+            <CardTitle className="font-medium">What is SheTrack?</CardTitle>
+            <CardDescription>The story behind our app</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            <p className="text-sm leading-relaxed">
+              SheTrack is a modern period tracking app designed to help you understand your cycle better. 
+              Our goal is to provide a simple, intuitive tool that helps you track your period, predict your fertile 
+              window, and manage your health with ease.
+            </p>
+            <p className="text-sm leading-relaxed">
+              We understand that every cycle is unique, which is why SheTrack learns from your data to provide
+              increasingly accurate predictions over time. Your privacy is our priority - all your data 
+              remains on your device and is never shared without your consent.
+            </p>
+            <p className="text-sm leading-relaxed">
+              Whether you're tracking your period, planning for pregnancy, or simply want to be more
+              aware of your body's natural rhythm, SheTrack is here to support your journey.
+            </p>
+          </CardContent>
+        </Card>
         
-        <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
-            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
-            Features
-          </h2>
-          <ul className="space-y-3 text-muted-foreground">
-            <li className="flex items-start gap-2">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
-              <span>Simple calendar visualization of your cycle</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
-              <span>Personalized cycle predictions based on your history</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
-              <span>Track symptoms and add multiple notes throughout your cycle</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
-              <span>Reminders for upcoming periods and fertile windows</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
-              <span>3D data visualization to better understand your patterns</span>
-            </li>
-          </ul>
-        </div>
-        
-        <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
-            <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
-            Privacy & Data
-          </h2>
-          <p className="mb-4 text-muted-foreground">
-            Your privacy is our top priority. SheTrack stores all your data locally on your device,
-            giving you complete control over your information. We believe period tracking should be 
-            a private matter, and we've designed our app with this principle in mind.
-          </p>
-        </div>
-        
-        <Card className="border-primary/20 overflow-hidden">
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 font-poppins text-center">
-              Developer
-            </h2>
-            
-            <div className="flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center mb-4">
-                <span className="text-2xl font-bold">AS</span>
+        <Card className="border-primary/20 overflow-hidden shadow-sm">
+          <CardHeader className="bg-gradient-to-br from-primary/10 to-secondary/10">
+            <CardTitle className="font-medium">Meet the Developer</CardTitle>
+            <CardDescription>The person behind SheTrack</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center text-center sm:flex-row sm:text-left sm:items-start gap-4">
+              <div className="rounded-full bg-gradient-to-br from-primary to-secondary h-24 w-24 flex items-center justify-center text-white text-2xl font-bold">
+                AS
               </div>
-              <h3 className="text-xl font-bold">Aman Shrivas</h3>
-              <p className="text-muted-foreground mb-4">Full Stack Developer</p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md mt-4">
-                <a 
-                  href="https://www.linkedin.com/in/aman-shrivas-97407014a/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors"
-                >
-                  <Linkedin className="h-5 w-5 text-blue-600" />
-                  <span>LinkedIn</span>
-                </a>
-                
-                <a 
-                  href="https://www.instagram.com/huntethan144/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors"
-                >
-                  <Instagram className="h-5 w-5 text-pink-600" />
-                  <span>Instagram</span>
-                </a>
-                
-                <div className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors">
-                  <Mail className="h-5 w-5 text-green-600" />
-                  <span className="text-sm">mercycode144@gmail.com</span>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xl font-semibold">Aman Shrivas</h3>
+                  <p className="text-muted-foreground text-sm">Full Stack Developer</p>
                 </div>
                 
-                <div className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors">
-                  <Phone className="h-5 w-5 text-cyan-600" />
-                  <span>+91 7693949108</span>
+                <p className="text-sm leading-relaxed">
+                  Passionate developer focused on creating thoughtful applications that improve people's lives.
+                  SheTrack is built with privacy, accuracy, and user experience in mind.
+                </p>
+                
+                <div className="flex flex-wrap justify-center sm:justify-start gap-2 pt-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1 text-xs"
+                    asChild
+                  >
+                    <a href="https://www.linkedin.com/in/aman-shrivas-97407014a/" target="_blank" rel="noopener noreferrer">
+                      <Linkedin className="h-3.5 w-3.5" />
+                      <span>LinkedIn</span>
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1 text-xs"
+                    asChild
+                  >
+                    <a href="https://www.instagram.com/huntethan144/" target="_blank" rel="noopener noreferrer">
+                      <Instagram className="h-3.5 w-3.5" />
+                      <span>Instagram</span>
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1 text-xs"
+                    asChild
+                  >
+                    <a href="mailto:mercycode144@gmail.com">
+                      <Mail className="h-3.5 w-3.5" />
+                      <span>Email</span>
+                    </a>
+                  </Button>
                 </div>
                 
-                <div className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors sm:col-span-2">
-                  <MapPin className="h-5 w-5 text-red-500" />
-                  <span>Indore, MP</span>
+                <div className="flex flex-col gap-1 pt-1">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>+91 7693949108</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>Indore, MP</span>
+                  </div>
                 </div>
               </div>
             </div>

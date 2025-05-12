@@ -4,10 +4,10 @@ import { ReactNode } from "react";
 export interface PeriodDay {
   id?: string;
   date: string;
-  flowIntensity?: FlowIntensity;  // Keep this as flowIntensity
+  flowIntensity?: FlowIntensity;
   symptoms?: string[];
   mood?: string[];
-  notes?: string[]; // Changed from string to string[] for multiple notes
+  notes?: string[];
 }
 
 export interface PeriodCycle {
@@ -17,7 +17,7 @@ export interface PeriodCycle {
   days: PeriodDay[];
   cycleLength?: number;
   periodLength: number;
-  notes?: string[]; // Changed from string to string[] for multiple notes
+  notes?: string[];
 }
 
 export interface FertilityWindow {
@@ -32,7 +32,7 @@ export interface Reminder {
   description?: string;
   date: string;
   type: 'period' | 'fertility' | 'medication' | 'other';
-  isCompleted?: boolean;  // This was defined as isCompleted but used as completed in components
+  isCompleted?: boolean;
 }
 
 export interface UserPreferences {
@@ -49,4 +49,14 @@ export interface ThemeProviderProps {
   children: ReactNode;
   defaultTheme?: string;
   storageKey?: string;
+}
+
+export type NotificationType = 'period-start' | 'period-end' | 'ovulation' | 'fertility-start' | 'fertility-end' | 'custom';
+
+export interface CycleNotification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  date: string;
+  isRead?: boolean;
 }
