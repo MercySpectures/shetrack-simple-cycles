@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { PeriodProvider } from "@/lib/period-context";
 import { MobileNavbar } from "@/components/MobileNavbar";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 import Index from "./pages/Index";
 import CalendarPage from "./pages/CalendarPage";
@@ -25,6 +26,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <div className="min-h-screen bg-background text-foreground pb-16">
               <Routes>
                 <Route path="/" element={<Index />} />

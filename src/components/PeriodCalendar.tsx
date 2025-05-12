@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { 
   format, 
@@ -24,6 +23,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { FlowIntensity } from "@/lib/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PeriodCalendarProps {
   onDateSelect?: (date: Date) => void;
@@ -214,11 +214,11 @@ export function PeriodCalendar({ onDateSelect }: PeriodCalendarProps) {
                       <div
                         className={cn(
                           "aspect-square flex flex-col items-center justify-center relative p-1 transition-all duration-200",
-                          isPeriod && "bg-primary text-primary-foreground font-medium rounded-full shadow-sm",
-                          isPrediction && "border-2 border-primary/70 text-primary-foreground rounded-full",
-                          isFertile && "border-2 border-blue-400/70 text-blue-500 rounded-full",
-                          isOvulation && "border-2 border-blue-500 text-blue-600 rounded-full font-medium",
-                          isToday && !isPeriod && !isPrediction && !isFertile && !isOvulation && "bg-primary/20 rounded-full font-medium",
+                          isPeriod && "bg-primary text-primary-foreground font-medium rounded-full shadow-md",
+                          isPrediction && "border-2 border-primary border-dashed text-primary-foreground rounded-full",
+                          isFertile && "border-2 border-chart-blue text-chart-blue rounded-full bg-blue-50 dark:bg-blue-900/20",
+                          isOvulation && "border-2 border-chart-purple bg-she-purple text-chart-purple rounded-full font-medium",
+                          isToday && !isPeriod && !isPrediction && !isFertile && !isOvulation && "bg-she-gray dark:bg-gray-700 text-foreground rounded-full font-medium",
                           !isCurrentMonth && "text-muted-foreground/50",
                           isSelected && "ring-2 ring-offset-2 ring-primary shadow-lg",
                           "hover:scale-110 hover:z-10 cursor-pointer"
@@ -228,20 +228,20 @@ export function PeriodCalendar({ onDateSelect }: PeriodCalendarProps) {
                         <span className="text-sm">{format(day, "d")}</span>
                         {emoji && <span className="text-xs mt-0.5">{emoji}</span>}
                         
-                        {/* Flow indicator dot with improved visibility */}
+                        {/* Flow indicator with improved visibility */}
                         {flowIntensity && (
                           <div 
                             className={cn(
-                              "absolute -bottom-1 w-2.5 h-2.5 rounded-full mx-auto shadow-sm",
-                              flowIntensity === "light" && "bg-pink-300",
-                              flowIntensity === "medium" && "bg-pink-500",
-                              flowIntensity === "heavy" && "bg-pink-700"
+                              "absolute -bottom-1 w-3 h-3 rounded-full mx-auto shadow-sm",
+                              flowIntensity === "light" && "bg-pink-300 animate-pulse",
+                              flowIntensity === "medium" && "bg-pink-500 animate-pulse",
+                              flowIntensity === "heavy" && "bg-pink-700 animate-pulse"
                             )}
                           />
                         )}
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent side="bottom" className="font-inter text-xs">
+                    <TooltipContent side="bottom" className="font-inter text-xs p-2 bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 border-primary/20">
                       {tooltipText}
                     </TooltipContent>
                   </Tooltip>
@@ -252,29 +252,31 @@ export function PeriodCalendar({ onDateSelect }: PeriodCalendarProps) {
         </TooltipProvider>
       </div>
 
-      <div className="mt-6 p-3 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg">
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 bg-primary rounded-full"></div>
-            <span className="text-xs">Period</span>
+      <div className="mt-6 p-3 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg shadow-sm border border-primary/10">
+        <ScrollArea className="h-14">
+          <div className="flex flex-wrap items-center justify-center gap-3 px-1">
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 bg-primary rounded-full shadow-sm"></div>
+              <span className="text-xs">Period</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 border-2 border-dashed border-primary rounded-full"></div>
+              <span className="text-xs">Predicted</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 border-2 border-chart-blue bg-blue-50 dark:bg-blue-900/20 rounded-full"></div>
+              <span className="text-xs">Fertile</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 border-2 border-chart-purple bg-she-purple rounded-full"></div>
+              <span className="text-xs">Ovulation</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 bg-she-gray dark:bg-gray-700 rounded-full"></div>
+              <span className="text-xs">Today</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 border-2 border-primary/70 rounded-full"></div>
-            <span className="text-xs">Predicted</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 border-2 border-blue-400/70 rounded-full"></div>
-            <span className="text-xs">Fertile</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 border-2 border-blue-500 rounded-full"></div>
-            <span className="text-xs">Ovulation</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3.5 h-3.5 bg-primary/20 rounded-full"></div>
-            <span className="text-xs">Today</span>
-          </div>
-        </div>
+        </ScrollArea>
       </div>
 
       {/* Flow intensity legend with improved styling */}
@@ -285,15 +287,15 @@ export function PeriodCalendar({ onDateSelect }: PeriodCalendarProps) {
         </p>
         <div className="flex items-center justify-center gap-4">
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 bg-pink-300 rounded-full shadow-sm"></div>
+            <div className="w-3 h-3 bg-pink-300 rounded-full shadow-sm animate-pulse"></div>
             <span className="text-xs">Light</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 bg-pink-500 rounded-full shadow-sm"></div>
+            <div className="w-3 h-3 bg-pink-500 rounded-full shadow-sm animate-pulse"></div>
             <span className="text-xs">Medium</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 bg-pink-700 rounded-full shadow-sm"></div>
+            <div className="w-3 h-3 bg-pink-700 rounded-full shadow-sm animate-pulse"></div>
             <span className="text-xs">Heavy</span>
           </div>
         </div>
