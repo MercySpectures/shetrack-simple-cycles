@@ -1,7 +1,12 @@
 
-import { HeartPulse, Info } from "lucide-react";
+import { HeartPulse, Info, Github, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { usePeriodTracking } from "@/lib/period-context";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const AboutPage = () => {
+  const { userPreferences } = usePeriodTracking();
+
   return (
     <div className="container max-w-lg mx-auto px-4 py-8 pb-24">
       <div className="mb-8 text-center">
@@ -14,7 +19,9 @@ const AboutPage = () => {
             About SheTrack
           </span>
         </h1>
-        <p className="text-muted-foreground">Simple period tracking, just for you ✨</p>
+        <p className="text-muted-foreground">
+          Hi {userPreferences.userName || "there"}, welcome to your period tracking companion ✨
+        </p>
       </div>
       
       <div className="space-y-6">
@@ -50,7 +57,7 @@ const AboutPage = () => {
             </li>
             <li className="flex items-start gap-2">
               <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
-              <span>Track symptoms and notes throughout your cycle</span>
+              <span>Track symptoms and add multiple notes throughout your cycle</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
@@ -58,7 +65,7 @@ const AboutPage = () => {
             </li>
             <li className="flex items-start gap-2">
               <span className="inline-block w-2 h-2 bg-primary rounded-full mt-2"></span>
-              <span>Data visualization to better understand your patterns</span>
+              <span>3D data visualization to better understand your patterns</span>
             </li>
           </ul>
         </div>
@@ -74,6 +81,59 @@ const AboutPage = () => {
             a private matter, and we've designed our app with this principle in mind.
           </p>
         </div>
+        
+        <Card className="border-primary/20 overflow-hidden">
+          <CardContent className="p-6">
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 font-poppins text-center">
+              Developer
+            </h2>
+            
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center mb-4">
+                <span className="text-2xl font-bold">AS</span>
+              </div>
+              <h3 className="text-xl font-bold">Aman Shrivas</h3>
+              <p className="text-muted-foreground mb-4">Full Stack Developer</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md mt-4">
+                <a 
+                  href="https://www.linkedin.com/in/aman-shrivas-97407014a/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors"
+                >
+                  <Linkedin className="h-5 w-5 text-blue-600" />
+                  <span>LinkedIn</span>
+                </a>
+                
+                <a 
+                  href="https://www.instagram.com/huntethan144/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors"
+                >
+                  <Instagram className="h-5 w-5 text-pink-600" />
+                  <span>Instagram</span>
+                </a>
+                
+                <div className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors">
+                  <Mail className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">mercycode144@gmail.com</span>
+                </div>
+                
+                <div className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors">
+                  <Phone className="h-5 w-5 text-cyan-600" />
+                  <span>+91 7693949108</span>
+                </div>
+                
+                <div className="flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors sm:col-span-2">
+                  <MapPin className="h-5 w-5 text-red-500" />
+                  <span>Indore, MP</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

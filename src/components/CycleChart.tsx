@@ -1,197 +1,193 @@
 
-import React from "react";
-import { usePeriodTracking } from "@/lib/period-context";
-import { format, parseISO, differenceInDays } from "date-fns";
+import { useEffect, useRef, useState } from 'react';
 import { 
-  BarChart, 
-  Bar, 
+  AreaChart, 
+  Area, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  Legend
-} from "recharts";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useTheme } from "@/lib/theme-provider";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
-
-type ChartDataItem = {
-  month: string;
-  length: number;
-  periodLength: number;
-};
+  TooltipProps
+} from 'recharts';
+import { format, parseISO, addDays } from 'date-fns';
+import { usePeriodTracking } from '@/lib/period-context';
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PeriodPieChart3D } from './PeriodPieChart3D';
 
 export function CycleChart() {
-  const { cycles, getAverageCycleLength, getAveragePeriodLength } = usePeriodTracking();
-  const { theme } = useTheme();
+  const { cycles, getPredictedPeriods } = usePeriodTracking();
+  const [activeTab, setActiveTab] = useState("cycle-length");
   
-  // Create chart data from cycles
-  const chartData: ChartDataItem[] = [];
-  
-  // Only process if we have at least 2 cycles to calculate cycle length
-  if (cycles.length >= 2) {
-    for (let i = 1; i < cycles.length; i++) {
-      const current = parseISO(cycles[i].startDate);
-      const previous = parseISO(cycles[i-1].startDate);
-      const cycleLength = differenceInDays(current, previous);
-      
-      const periodLength = differenceInDays(
-        parseISO(cycles[i-1].endDate),
-        parseISO(cycles[i-1].startDate)
-      ) + 1;
-      
-      chartData.push({
-        month: format(previous, "MMM"),
-        length: cycleLength,
-        periodLength: periodLength
-      });
+  // Generate chart data from cycles
+  const generateChartData = () => {
+    if (cycles.length < 2) {
+      return [];
     }
-  }
-  
-  // If we have at least one cycle, add the current cycle
-  if (cycles.length > 0) {
-    const lastCycle = cycles[cycles.length - 1];
-    const periodLength = differenceInDays(
-      parseISO(lastCycle.endDate),
-      parseISO(lastCycle.startDate)
-    ) + 1;
     
-    chartData.push({
-      month: format(parseISO(lastCycle.startDate), "MMM"),
-      length: getAverageCycleLength(),
-      periodLength: periodLength
-    });
-  }
-  
-  // Chart config for colors
-  const chartConfig = {
-    cycleLength: {
-      label: "Cycle Length",
-      theme: {
-        light: "url(#cycleGradient)",
-        dark: "url(#cycleGradientDark)"
-      }
-    },
-    periodLength: {
-      label: "Period Length",
-      theme: {
-        light: "url(#periodGradient)",
-        dark: "url(#periodGradientDark)" 
-      }
-    }
+    return cycles
+      .filter(cycle => cycle.cycleLength)
+      .map(cycle => ({
+        date: cycle.startDate,
+        cycleLength: cycle.cycleLength,
+        periodLength: cycle.periodLength
+      }));
   };
   
-  // If no data, show placeholder
-  if (chartData.length === 0) {
-    return (
-      <Card className="overflow-hidden border-primary/20">
-        <CardHeader className="bg-gradient-to-r from-primary/10 to-secondary/10">
-          <CardTitle>Cycle Analysis</CardTitle>
-          <CardDescription>Track your cycle patterns over time</CardDescription>
-        </CardHeader>
-        <CardContent className="h-[250px] flex items-center justify-center">
-          <p className="text-muted-foreground">Add periods to see your cycle analysis</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const chartData = generateChartData();
+
+  // Custom tooltip
+  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background/95 backdrop-blur-sm border rounded-lg shadow-md p-3 text-sm">
+          <p className="font-medium mb-1">
+            {format(parseISO(label), 'MMM d, yyyy')}
+          </p>
+          {payload.map((item, index) => (
+            <p key={index} style={{ color: item.color }}>
+              {item.name}: {item.value} {item.name === 'cycleLength' ? 'days' : 'days'}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    
+    return null;
+  };
 
   return (
-    <Card className="overflow-hidden border-primary/20">
-      <CardHeader className="bg-gradient-to-r from-primary/10 to-secondary/10">
-        <CardTitle>Cycle Analysis</CardTitle>
-        <CardDescription>Track your cycle patterns over time</CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} barGap={4}>
-              <defs>
-                <linearGradient id="cycleGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#9b87f5" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#b59dff" stopOpacity={0.8} />
-                </linearGradient>
-                <linearGradient id="periodGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FF8AAB" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#FFA5BA" stopOpacity={0.8} />
-                </linearGradient>
-                <linearGradient id="cycleGradientDark" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#b59dff" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#9b87f5" stopOpacity={0.8} />
-                </linearGradient>
-                <linearGradient id="periodGradientDark" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FF8AAB" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#FFA5BA" stopOpacity={0.8} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} strokeOpacity={0.3} />
-              <XAxis 
-                dataKey="month" 
-                axisLine={true} 
-                tickLine={false}
-                fontSize={12}
-                stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
-              />
-              <YAxis 
-                allowDecimals={false} 
-                axisLine={true} 
-                tickLine={false} 
-                fontSize={12}
-                stroke={theme === 'dark' ? '#9ca3af' : '#6b7280'}
-              />
-              <Tooltip 
-                cursor={{ fill: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
-                content={({ active, payload, label }) => {
-                  if (active && payload && payload.length) {
-                    return (
-                      <div className={`p-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-md shadow-md border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
-                        <p className="font-medium text-sm">{label}</p>
-                        {payload.map((entry, index) => (
-                          <p key={index} className="text-xs flex items-center gap-2 mt-1">
-                            <span 
-                              className="w-2 h-2 rounded-full"
-                              style={{ 
-                                backgroundColor: entry.name === "length" ? "#9b87f5" : "#FF8AAB"
-                              }}
-                            />
-                            <span className="font-medium">
-                              {entry.name === "length" ? "Cycle Length: " : "Period Length: "}
-                              {entry.value} days
-                            </span>
-                          </p>
-                        ))}
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <Legend 
-                verticalAlign="top"
-                height={36}
-                formatter={(value) => {
-                  return value === "length" ? "Cycle Length" : "Period Length";
-                }}
-              />
-              <Bar 
-                dataKey="length" 
-                name="length" 
-                fill={theme === 'dark' ? "url(#cycleGradientDark)" : "url(#cycleGradient)"} 
-                radius={[4, 4, 0, 0]} 
-                maxBarSize={40}
-              />
-              <Bar 
-                dataKey="periodLength" 
-                name="periodLength" 
-                fill={theme === 'dark' ? "url(#periodGradientDark)" : "url(#periodGradient)"}
-                radius={[4, 4, 0, 0]} 
-                maxBarSize={40}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <Tabs defaultValue="cycle-length" value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <TabsList className="grid grid-cols-3 mb-4">
+        <TabsTrigger value="cycle-length">Cycle Length</TabsTrigger>
+        <TabsTrigger value="period-length">Period Length</TabsTrigger>
+        <TabsTrigger value="distribution">Distribution</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="cycle-length" className="space-y-4">
+        <Card className="border-primary/20 shadow-sm">
+          <CardContent className="p-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-medium">Cycle Length Trends</h3>
+              <p className="text-sm text-muted-foreground">
+                Track how your cycle length changes over time
+              </p>
+            </div>
+            
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart
+                  data={chartData}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorCycle" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={(date) => format(parseISO(date), 'MMM d')}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis 
+                    domain={['dataMin - 1', 'dataMax + 1']}
+                    tick={{ fontSize: 12 }}
+                    label={{ 
+                      value: 'Days', 
+                      angle: -90, 
+                      position: 'insideLeft',
+                      style: { textAnchor: 'middle', fontSize: 12, opacity: 0.5 }
+                    }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="cycleLength" 
+                    name="Cycle Length"
+                    stroke="#8884d8" 
+                    strokeWidth={2}
+                    fillOpacity={1} 
+                    fill="url(#colorCycle)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center flex-col text-muted-foreground">
+                <p>Not enough cycle data</p>
+                <p className="text-xs mt-2">Track at least 2 cycles to see trends</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="period-length" className="space-y-4">
+        <Card className="border-primary/20 shadow-sm">
+          <CardContent className="p-4">
+            <div className="mb-4">
+              <h3 className="text-lg font-medium">Period Length Trends</h3>
+              <p className="text-sm text-muted-foreground">
+                Track how your period length changes over time
+              </p>
+            </div>
+            
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart
+                  data={chartData}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorPeriod" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#e91e63" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#e91e63" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={(date) => format(parseISO(date), 'MMM d')}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis 
+                    domain={[0, 'dataMax + 1']}
+                    tick={{ fontSize: 12 }}
+                    label={{ 
+                      value: 'Days', 
+                      angle: -90, 
+                      position: 'insideLeft',
+                      style: { textAnchor: 'middle', fontSize: 12, opacity: 0.5 }
+                    }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="periodLength" 
+                    name="Period Length"
+                    stroke="#e91e63" 
+                    strokeWidth={2}
+                    fillOpacity={1} 
+                    fill="url(#colorPeriod)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center flex-col text-muted-foreground">
+                <p>Not enough cycle data</p>
+                <p className="text-xs mt-2">Track at least 2 cycles to see trends</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      <TabsContent value="distribution">
+        <PeriodPieChart3D />
+      </TabsContent>
+    </Tabs>
   );
 }

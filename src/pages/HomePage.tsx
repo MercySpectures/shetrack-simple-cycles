@@ -26,7 +26,9 @@ const HomePage = () => {
             SheTrack
           </span>
         </h1>
-        <p className="text-muted-foreground">Simple period tracking, just for you ✨</p>
+        <p className="text-muted-foreground">
+          Welcome, {userPreferences.userName || "User"} ✨ Track your cycle with ease
+        </p>
       </div>
       
       <div className="space-y-8">
@@ -52,7 +54,7 @@ const HomePage = () => {
           <PeriodNotes />
         </div>
         
-        <div>
+        <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 font-poppins">
             <span className="inline-block w-2 h-6 bg-gradient-to-b from-primary to-primary-foreground rounded-full mr-1"></span>
             <BellRing className="h-5 w-5 text-primary" />

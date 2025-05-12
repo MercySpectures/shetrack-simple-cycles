@@ -1,11 +1,13 @@
-export type FlowIntensity = "light" | "medium" | "heavy";
+
+import { ReactNode } from "react";
 
 export interface PeriodDay {
+  id?: string;
   date: string;
-  flow: FlowIntensity;
+  flowIntensity?: FlowIntensity;
   symptoms?: string[];
-  mood?: "happy" | "neutral" | "sad";
-  notes?: string;
+  mood?: string[];
+  notes?: string[]; // Changed from string to string[] for multiple notes
 }
 
 export interface PeriodCycle {
@@ -14,8 +16,8 @@ export interface PeriodCycle {
   endDate: string;
   days: PeriodDay[];
   cycleLength?: number;
-  periodLength?: number;
-  notes?: string;
+  periodLength: number;
+  notes?: string[]; // Changed from string to string[] for multiple notes
 }
 
 export interface FertilityWindow {
@@ -26,15 +28,25 @@ export interface FertilityWindow {
 
 export interface Reminder {
   id: string;
-  date: string;
   title: string;
   description?: string;
-  completed: boolean;
+  date: string;
+  type: 'period' | 'fertility' | 'medication' | 'other';
+  isCompleted?: boolean;
 }
 
 export interface UserPreferences {
+  userName: string; // Added userName field
   averageCycleLength: number;
   averagePeriodLength: number;
   lastUpdated: string;
   isOnboardingComplete?: boolean;
+}
+
+export type FlowIntensity = 'light' | 'medium' | 'heavy' | 'spotting' | null;
+
+export interface ThemeProviderProps {
+  children: ReactNode;
+  defaultTheme?: string;
+  storageKey?: string;
 }

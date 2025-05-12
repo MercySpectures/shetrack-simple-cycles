@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { addDays, differenceInDays, format, parseISO, isBefore, isAfter, isWithinInterval } from "date-fns";
 import { 
@@ -39,9 +38,11 @@ interface PeriodContextType {
 const PeriodContext = createContext<PeriodContextType | undefined>(undefined);
 
 const DEFAULT_PREFERENCES: UserPreferences = {
+  userName: "User",
   averageCycleLength: 28,
   averagePeriodLength: 5,
   lastUpdated: new Date().toISOString(),
+  isOnboardingComplete: false,
 };
 
 export function PeriodProvider({ children }: { children: React.ReactNode }) {
@@ -350,7 +351,10 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
     setCycles(prevCycles => {
       return prevCycles.map(cycle => {
         const updatedDays = cycle.days.map(day => 
-          day.date === date ? { ...day, notes: note } : day
+          day.date === date ? { 
+            ...day, 
+            notes: day.notes ? [...day.notes, note] : [note]
+          } : day
         );
         
         return {
@@ -364,7 +368,10 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
   const addNoteToCycle = (cycleId: string, note: string) => {
     setCycles(prevCycles => {
       return prevCycles.map(cycle => 
-        cycle.id === cycleId ? { ...cycle, notes: note } : cycle
+        cycle.id === cycleId ? { 
+          ...cycle, 
+          notes: cycle.notes ? [...cycle.notes, note] : [note] 
+        } : cycle
       );
     });
   };

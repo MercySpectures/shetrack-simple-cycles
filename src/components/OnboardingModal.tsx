@@ -5,26 +5,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { usePeriodTracking } from "@/lib/period-context";
-import { CalendarIcon, HeartPulse } from "lucide-react";
+import { HeartPulse } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export function OnboardingModal() {
-  const { updateUserPreferences } = usePeriodTracking();
+  const { updateUserPreferences, userPreferences } = usePeriodTracking();
   const { toast } = useToast();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(!userPreferences.isOnboardingComplete);
   const [step, setStep] = useState(1);
-  const [lastPeriodDate, setLastPeriodDate] = useState<Date | undefined>(undefined);
+  const [userName, setUserName] = useState("");
   const [cycleLength, setCycleLength] = useState("28");
   const [periodLength, setPeriodLength] = useState("5");
 
   const handleComplete = () => {
     // Save preferences
     updateUserPreferences({
+      userName: userName.trim() || "User",
       averageCycleLength: parseInt(cycleLength, 10),
       averagePeriodLength: parseInt(periodLength, 10),
       lastUpdated: new Date().toISOString(),
@@ -42,10 +40,10 @@ export function OnboardingModal() {
   };
 
   const handleNext = () => {
-    if (step === 1 && !lastPeriodDate) {
+    if (step === 1 && !userName.trim()) {
       toast({
-        title: "Date required",
-        description: "Please select your last period start date to continue.",
+        title: "Name required",
+        description: "Please enter your name to continue.",
         variant: "destructive"
       });
       return;
@@ -110,37 +108,19 @@ export function OnboardingModal() {
 
         {step === 1 && (
           <div className="space-y-4">
-            <p className="text-center text-sm">When did your last period start?</p>
+            <p className="text-center text-sm">What should we call you?</p>
             
             <div className="flex justify-center">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full max-w-xs justify-start text-left font-normal",
-                      !lastPeriodDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {lastPeriodDate ? format(lastPeriodDate, "MMMM d, yyyy") : <span>Select a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 pointer-events-auto" align="center">
-                  <Calendar
-                    mode="single"
-                    selected={lastPeriodDate}
-                    onSelect={setLastPeriodDate}
-                    initialFocus
-                    disabled={(date) => date > new Date()}
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
+              <Input
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="Your name"
+                className="max-w-xs"
+              />
             </div>
             
             <p className="text-center text-xs text-muted-foreground">
-              This helps us calculate your cycle more accurately
+              We'll use your name to personalize the experience
             </p>
           </div>
         )}
