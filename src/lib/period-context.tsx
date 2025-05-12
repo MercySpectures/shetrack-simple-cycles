@@ -31,8 +31,9 @@ interface PeriodContextType {
   updateReminder: (reminder: Reminder) => void;
   deleteReminder: (id: string) => void;
   updateUserPreferences: (preferences: Partial<UserPreferences>) => void;
-  addNoteToDay: (date: string, note: string) => void;
+  addNoteToDay: (date: string, notes: string | string[]) => void;
   addNoteToCycle: (cycleId: string, note: string) => void;
+  calculateFertileWindow: (cycle: PeriodCycle) => FertilityWindow | null;
 }
 
 const PeriodContext = createContext<PeriodContextType | undefined>(undefined);
@@ -316,6 +317,36 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
     };
   };
 
+  // Add this new function to calculate the fertile window for a specific cycle
+  const calculateFertileWindow = (cycle: PeriodCycle): FertilityWindow | null => {
+    try {
+      if (!cycle) return null;
+      
+      const avgCycleLength = userPreferences.averageCycleLength || getAverageCycleLength();
+      
+      // Start from the cycle's start date
+      const cycleStart = parseISO(cycle.startDate);
+      
+      // Calculate for the current cycle
+      // Ovulation typically happens 14 days before the next period
+      const nextPeriodStart = addDays(cycleStart, avgCycleLength);
+      const ovulationDate = addDays(nextPeriodStart, -14);
+      
+      // Fertility window is typically 5 days before ovulation and the day of ovulation
+      const fertileStart = addDays(ovulationDate, -5);
+      const fertileEnd = ovulationDate;
+      
+      return {
+        ovulationDate: format(ovulationDate, "yyyy-MM-dd"),
+        fertileStart: format(fertileStart, "yyyy-MM-dd"),
+        fertileEnd: format(fertileEnd, "yyyy-MM-dd")
+      };
+    } catch (error) {
+      console.error("Error calculating fertility window:", error);
+      return null;
+    }
+  };
+
   // Reminder functions
   const addReminder = (reminder: Omit<Reminder, "id">) => {
     const newReminder: Reminder = {
@@ -346,16 +377,24 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
-  // Notes functions
-  const addNoteToDay = (date: string, note: string) => {
+  // Notes functions - update to accept string or string array
+  const addNoteToDay = (date: string, notes: string | string[]) => {
     setCycles(prevCycles => {
       return prevCycles.map(cycle => {
-        const updatedDays = cycle.days.map(day => 
-          day.date === date ? { 
-            ...day, 
-            notes: day.notes ? [...day.notes, note] : [note]
-          } : day
-        );
+        const updatedDays = cycle.days.map(day => {
+          if (day.date === date) {
+            // Handle both string and string[] types for notes
+            const newNotes = Array.isArray(notes) ? notes : [notes];
+            const existingNotes = day.notes || [];
+            return { 
+              ...day, 
+              notes: Array.isArray(existingNotes) 
+                ? [...existingNotes, ...newNotes] 
+                : [existingNotes, ...newNotes]
+            };
+          }
+          return day;
+        });
         
         return {
           ...cycle,
@@ -395,7 +434,8 @@ export function PeriodProvider({ children }: { children: React.ReactNode }) {
         deleteReminder,
         updateUserPreferences,
         addNoteToDay,
-        addNoteToCycle
+        addNoteToCycle,
+        calculateFertileWindow
       }}
     >
       {children}
