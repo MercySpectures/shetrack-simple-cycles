@@ -95,9 +95,9 @@ export function OnboardingModal() {
           <div className="mx-auto flex flex-col items-center mb-2">
             <div className="relative mb-2">
               <div className="absolute -top-1.5 -left-1.5 w-10 h-10 bg-pink-200 rounded-full animate-pulse opacity-50" />
-              <HeartPulse className="h-8 w-8 text-primary-foreground relative z-10" />
+              <HeartPulse className="h-8 w-8 text-primary relative z-10" />
             </div>
-            <DialogTitle className="text-xl font-bold bg-gradient-to-r from-primary-foreground to-primary-foreground/80 bg-clip-text text-transparent">
+            <DialogTitle className="text-xl font-bold bg-gradient-to-r from-pink-500 to-primary text-transparent bg-clip-text dark:from-primary-foreground dark:to-primary-foreground/80">
               Welcome to SheTrack
             </DialogTitle>
           </div>

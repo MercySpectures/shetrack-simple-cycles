@@ -45,6 +45,9 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Dialog title colors specifically for light mode */
+    --modal-title: 330 85% 60%;
   }
 
   .dark {
@@ -84,6 +87,9 @@
     --sidebar-accent-foreground: 240 10% 95%;
     --sidebar-border: 240 5% 20%;
     --sidebar-ring: 252 30% 40%;
+    
+    /* Dialog title colors for dark mode */
+    --modal-title: 0 0% 100%;
   }
 }
 
@@ -93,7 +99,7 @@
   }
 
   html {
-    @apply font-inter;
+    @apply font-inter scroll-smooth;
   }
 
   body {
@@ -102,6 +108,12 @@
   
   h1.page-heading {
     @apply text-primary font-bold font-poppins flex items-center gap-2;
+  }
+  
+  /* Dialog title styles specifically for light mode */
+  .DialogTitle {
+    @apply text-lg font-semibold leading-none tracking-tight;
+    color: hsl(var(--modal-title));
   }
 }
 
@@ -153,4 +165,31 @@
   .note-item-content {
     @apply whitespace-pre-wrap text-sm;
   }
+  
+  /* Responsive improvements */
+  @media (max-width: 640px) {
+    .container {
+      @apply px-4;
+    }
+    
+    h1.page-heading {
+      @apply text-xl;
+    }
+  }
+  
+  /* Animation classes */
+  .animate-fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Make sure all dialogs/modals have consistent styling */
+[data-radix-popper-content-wrapper] {
+  @apply max-w-[95vw] md:max-w-md;
 }
