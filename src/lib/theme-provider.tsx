@@ -25,11 +25,11 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(
     () => {
       const storedTheme = localStorage.getItem(storageKey);
-      // Ensure we return a valid Theme type
+      // Ensure we return a valid Theme type by checking against allowed values
       if (storedTheme === "dark" || storedTheme === "light" || storedTheme === "system") {
-        return storedTheme;
+        return storedTheme as Theme;
       }
-      return defaultTheme;
+      return defaultTheme as Theme;
     }
   );
 
