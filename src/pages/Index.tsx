@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import HomePage from "./HomePage";
 import { OnboardingModal } from "@/components/OnboardingModal";
-import { PeriodPieChart2D } from "@/components/PeriodPieChart2D";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Index = () => {
@@ -16,9 +15,6 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <OnboardingModal />
         <HomePage />
-        <div className="mt-8 max-w-md mx-auto">
-          <PeriodPieChart2D />
-        </div>
       </div>
     </ScrollArea>
   );

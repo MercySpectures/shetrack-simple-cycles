@@ -14,7 +14,7 @@ import { format, parseISO, addDays } from 'date-fns';
 import { usePeriodTracking } from '@/lib/period-context';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PeriodPieChart3D } from './PeriodPieChart3D';
+import { PeriodPieChart2D } from './PeriodPieChart2D';
 
 export function CycleChart() {
   const { cycles, getPredictedPeriods } = usePeriodTracking();
@@ -186,7 +186,7 @@ export function CycleChart() {
       </TabsContent>
       
       <TabsContent value="distribution">
-        <PeriodPieChart3D />
+        <PeriodPieChart2D />
       </TabsContent>
     </Tabs>
   );
