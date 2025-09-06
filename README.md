@@ -1,73 +1,70 @@
-# Welcome to your Lovable project
+# SheTrack – Period Tracker 🩸🌸
 
-## Project info
+**SheTrack** is a modern, **handy, and easy-to-use period tracker** built with **React (Vite + TypeScript)**, styled using **Tailwind CSS** and **shadcn/ui** components. It helps women **track cycles, predict upcoming periods, log symptoms, and manage health insights**—all while keeping data private and accessible.
 
-**URL**: https://lovable.dev/projects/45a91909-9629-47b2-ad11-8a2ed5dddbd4
+---
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+* 📅 **Period Tracking** – Log start dates & average cycle length.
+* 🔮 **Cycle Prediction** – Calculates expected next period using smart algorithms.
+* 😊 **Symptom & Mood Logging** *(planned)* – Record cramps, flow, and moods.
+* 🔔 **Reminders & Notifications** *(planned)* – Alerts for upcoming cycles.
+* 🔐 **Privacy First** – Local storage-based, user-only data access.
+* 🎨 **Beautiful UI** – Built with **shadcn/ui** and **Tailwind CSS**.
+* ⚡ **Blazing Fast** – Powered by **Vite + TypeScript + React**.
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/45a91909-9629-47b2-ad11-8a2ed5dddbd4) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+* **Frontend Framework:** [React](https://react.dev/)
+* **Build Tool:** [Vite](https://vitejs.dev/)
+* **Language:** [TypeScript](https://www.typescriptlang.org/)
+* **UI Components:** [shadcn/ui](https://ui.shadcn.com/)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🚀 Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 1️⃣ Clone the repository
 
-Follow these steps:
+```bash
+git clone https://github.com/MercySpectures/shetrack-simple-cycles.git
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 2️⃣ Install dependencies
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+npm install
+# or
+yarn install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 3️⃣ Run the development server
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 4️⃣ Build for production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+```
+---
 
-**Use GitHub Codespaces**
+## 🔮 Future Enhancements
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+* 📊 **Calendar View** with ovulation & fertile windows.
+* 📌 **Custom Reminders** for upcoming cycles.
+* 📈 **Health Insights Dashboard** (charts, trends).
+* 📱 **Mobile App** (React Native / Expo).
+* ⌚ **Wearable Integration** for smarter predictions.
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 📜 License
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/45a91909-9629-47b2-ad11-8a2ed5dddbd4) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Licensed under the **MIT License** – free to use, modify, and distribute with attribution.
